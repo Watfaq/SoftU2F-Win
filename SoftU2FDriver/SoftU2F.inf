@@ -1,0 +1,84 @@
+;
+; SoftU2F.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=HIDClass
+ClassGuid={745a17a0-74d3-11d0-b6fe-00a0c90f57da}
+Provider=%ManufacturerName%
+CatalogFile=SoftU2F.cat
+DriverVer=; TODO: set DriverVer in stampinf property pages
+
+[DestinationDirs]
+DefaultDestDir = 12
+SoftU2F_Device_CoInstaller_CopyFiles = 11
+
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+SoftU2F.Driver.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%SoftU2F.DeviceDesc%=SoftU2F_Device, Root\Watfaq\SoftU2F ; TODO: edit hw-id
+
+[SoftU2F_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+SoftU2F.Driver.sys
+
+;-------------- Service installation
+[SoftU2F_Device.NT.Services]
+AddService = SoftU2F,%SPSVCINST_ASSOCSERVICE%, SoftU2F_Service_Inst
+
+; -------------- SoftU2F driver install sections
+[SoftU2F_Service_Inst]
+DisplayName    = %SoftU2F.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\SoftU2F.Driver.sys
+
+;
+;--- SoftU2F_Device Coinstaller installation ------
+;
+
+[SoftU2F_Device.NT.CoInstallers]
+AddReg=SoftU2F_Device_CoInstaller_AddReg
+CopyFiles=SoftU2F_Device_CoInstaller_CopyFiles
+
+[SoftU2F_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[SoftU2F_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[SoftU2F_Device.NT.Wdf]
+KmdfService =  SoftU2F, SoftU2F_wdfsect
+[SoftU2F_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="Watfaq"
+ClassName="U2FHID"
+DiskName = "SoftU2F Installation Disk"
+SoftU2F.DeviceDesc = "SoftU2F Device"
+SoftU2F.SVCDESC = "SoftU2F Driver SVC"
+
+[SoftU2F_Device.NT.HW]
+AddReg = SoftU2F_Device.NT.AddReg
+
+[SoftU2F_Device.NT.AddReg]
+HKR,,"LowerFilters",0x00010000,"vhf"
