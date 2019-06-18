@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 
-namespace SoftU2F.Console.Storage
+namespace SystemTray.Storage
 {
     public class AppDbContext : DbContext
     {

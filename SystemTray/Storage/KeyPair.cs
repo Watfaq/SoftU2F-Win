@@ -14,7 +14,7 @@ using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 
-namespace SoftU2F.Console.Storage
+namespace SystemTray.Storage
 {
     public class KeyPair
     {
@@ -100,8 +100,10 @@ namespace SoftU2F.Console.Storage
 
         private static byte[] sha512(byte[] data)
         {
-            using var hasher = new SHA512Managed();
-            return hasher.ComputeHash(data);
+            using (var hasher = new SHA512Managed())
+            {
+                return hasher.ComputeHash(data);
+            }
         }
     }
 }

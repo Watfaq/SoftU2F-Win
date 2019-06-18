@@ -25,12 +25,12 @@ namespace U2FHID
 
     #endregion
 
-    public sealed partial class U2FHIDBackgroundTask
+    public sealed partial class BackgroundTask
     {
 
         private static IntPtr _device;
 
-        public U2FHIDBackgroundTask()
+        public BackgroundTask()
         {
             openDevice();
         }

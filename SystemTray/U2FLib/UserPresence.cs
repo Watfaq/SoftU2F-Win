@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using SystemTray;
 using Timer = System.Timers.Timer;
 
 namespace U2FHID
@@ -49,7 +50,7 @@ namespace U2FHID
             PresenceTimeout.Enabled = false;
         }
 
-        public static Task AskAsync(PresenceType type, string facet)
+        public static void AskAsync(PresenceType type, string facet)
         {
             var title = "";
             var message = "";
@@ -65,14 +66,8 @@ namespace U2FHID
                     break;
             }
 
-            return Task.Run(() =>
-            {
-                var messageBoxResult = MessageBox.Show(message, title, MessageBoxButton.YesNo);
-                if (messageBoxResult == MessageBoxResult.Yes)
-                {
-                    Set();
-                }
-            });
+            var currentApp = (App) Application.Current;
+            currentApp.NotifyIcon.ShowBalloonTip(title, message, currentApp.NotifyIcon.Icon);
 
         }
 

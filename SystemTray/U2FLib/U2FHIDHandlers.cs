@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using SystemTray.Storage;
 using APDU;
-using SoftU2F.Console.Storage;
 
 namespace U2FHID
 {
-    partial class U2FHIDBackgroundTask
+    partial class BackgroundTask
     {
-        private IRawConvertible HandleVersionRequest(byte[] rawData, IO_CTL_XFER_MESSAGE request)
+        private IRawConvertible HandleVersionRequest(byte[] rawData, BackgroundTask.IO_CTL_XFER_MESSAGE request)
         {
 
             var _ = new VersionRequest(rawData); // validate request data;
             return new VersionResponse("U2F_V2");
         }
 
-        private IRawConvertible HandleRegisterRequest(byte[] rawData, IO_CTL_XFER_MESSAGE request)
+        private IRawConvertible HandleRegisterRequest(byte[] rawData, BackgroundTask.IO_CTL_XFER_MESSAGE request)
         {
             var req = new RegisterRequest(rawData);
             var facet = KnownFacets.GetKnownFacet(req.ApplicationParameter);
@@ -63,7 +63,7 @@ namespace U2FHID
             return resp;
         }
 
-        private IRawConvertible HandleAuthenticationRequest(byte[] rawData, IO_CTL_XFER_MESSAGE request)
+        private IRawConvertible HandleAuthenticationRequest(byte[] rawData, BackgroundTask.IO_CTL_XFER_MESSAGE request)
         {
             var req = new AuthenticationRequest(rawData);
 
@@ -81,12 +81,14 @@ namespace U2FHID
             }
 
             UserPresence.Take();
-
-            using var db = new AppDbContext();
-            var appData = db.ApplicationDatum.First();
-            if (appData == null) return CreateError(ProtocolErrorCode.OtherError);
-            appData.Counter += 1;
-            db.SaveChanges();
+            ApplicationData appData;
+            using (var db = new AppDbContext())
+            {
+                appData = db.ApplicationDatum.First();
+                if (appData == null) return CreateError(ProtocolErrorCode.OtherError);
+                appData.Counter += 1;
+                db.SaveChanges();
+            }
 
             var payloadSize = req.ApplicationParameter.Length + 1 + Marshal.SizeOf<UInt32>() +
                               req.ApplicationParameter.Length;

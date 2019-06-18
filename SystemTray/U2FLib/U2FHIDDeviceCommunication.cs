@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -10,7 +11,7 @@ using APDU;
 
 namespace U2FHID
 {
-    partial class U2FHIDBackgroundTask
+    partial class BackgroundTask
     {
         private static readonly uint FILE_DEVICE_KEYBOARD = 0x0000000b;
         private static readonly uint METHOD_BUFFERED = 0;
@@ -96,7 +97,8 @@ namespace U2FHID
             return xferMessage;
         }
 
-        [DllImport("NativeBridge.dll", CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
+        private const string BridgeDllPath = "NativeBridge.dll";
+        [DllImport(BridgeDllPath, CharSet = CharSet.Unicode, CallingConvention = CallingConvention.StdCall)]
         public static extern IntPtr GetInterfaceDevicePath();
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
