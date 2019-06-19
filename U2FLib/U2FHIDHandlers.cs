@@ -29,7 +29,7 @@ namespace U2FLib
             if (!UserPresence.Present)
             {
                 UserPresence.AskAsync(UserPresence.PresenceType.Registration, facet);
-                return null;  // instead of ConditionNoSatisfied, just return null here, so that Chrome won't flood.
+                return CreateError(ProtocolErrorCode.ConditionNoSatisfied);
             }
 
             UserPresence.Take();
@@ -77,7 +77,7 @@ namespace U2FLib
             if (!UserPresence.Present)
             {
                 UserPresence.AskAsync(UserPresence.PresenceType.Authentication, facet);
-                return null;  // instead of ConditionNoSatisfied, just return null here, so that Chrome won't flood.
+                return CreateError(ProtocolErrorCode.ConditionNoSatisfied);
             }
 
             UserPresence.Take();

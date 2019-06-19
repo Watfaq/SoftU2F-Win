@@ -1,15 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <TargetFramework>netcoreapp3.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
-    <ApplicationIcon />
+    <ApplicationIcon>Resources\key.ico</ApplicationIcon>
     <StartupObject />
+    <Authors>ibigbug</Authors>
+    <Company>Watfaq</Company>
+    <Product>SoftU2F</Product>
+    <Description>Software U2F authenticator for Windows 10
+</Description>
+    <PackageProjectUrl>https://github.com/ibigbug/softu2f-win</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/ibigbug/softu2f-win</RepositoryUrl>
+    <PackageTags>u2f,security</PackageTags>
   </PropertyGroup>
 
   <Target Name="CopyResource" AfterTargets="Build">
-    <Copy DestinationFolder="$(OutDir)" SourceFiles="Resources\tray.ico" />
+    <Copy DestinationFolder="$(OutDir)" SourceFiles="Resources\lock.ico" />
+    <Copy DestinationFolder="$(OutDir)" SourceFiles="Resources\key.ico" />
   </Target>
 
   <ItemGroup>

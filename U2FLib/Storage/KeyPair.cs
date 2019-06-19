@@ -87,7 +87,7 @@ namespace U2FLib.Storage
             {
                 return ProtectedData.Unprotect(data, null, DataProtectionScope.CurrentUser);
             }
-            catch (Exception e)
+            catch
             {
                 return null;
             }

@@ -30,8 +30,10 @@ namespace SoftU2FDaemon
 
         #region App settings
 
-        private static readonly string DBPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "db.sqlite");
+        private static readonly string BinFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), typeof(App).Assembly.GetName().Name);
+        private static readonly string DBPath = Path.Combine(
+            BinFolder, "db.sqlite");
 
         #endregion
 
@@ -52,44 +54,6 @@ namespace SoftU2FDaemon
 
         #region Application Initialization
 
-        private void InitializeTrayIcon()
-        {
-            _trayMenu = new ContextMenu();
-            _trayMenu.MenuItems.Add("Exit", ((sender, args) =>
-            {
-                Application.Exit();
-            }));
-
-            _trayMenu.MenuItems.Add("Reset", (sender, args) =>
-            {
-                var confirm = MessageBox.Show("Do you want to reset SoftU2F? this will delete all your local data.",
-                    "Reset Database", MessageBoxButton.YesNo);
-                if (confirm != MessageBoxResult.Yes)
-                {
-                    MessageBox.Show("Reset cancelled");
-                    return;
-                }
-
-                if (File.Exists(DBPath))
-                {
-                    var bak = $"{DBPath}.bak";
-                    if (File.Exists(bak)) File.Delete(bak);
-                    File.Move(DBPath, bak);
-                    Restart();
-                }
-            });
-          
-
-            components = new Container();
-
-            _trayIcon = new NotifyIcon(components)
-            {
-                Text = "SoftU2F Daemon", ContextMenu = _trayMenu, Icon = new Icon("tray.ico"), Visible = true
-            };
-
-            _trayIcon.BalloonTipClicked += (sender, args) => _userPresenceCallback?.Invoke(true);
-        }
-
         private void Restart()
         {
             Application.Restart();
@@ -104,6 +68,7 @@ namespace SoftU2FDaemon
             var dbContext = _serviceProvider.GetService<AppDbContext>();
             using (dbContext)
             {
+                if (!Directory.Exists(BinFolder)) Directory.CreateDirectory(BinFolder);
                 dbContext.Database.Migrate();
                 var appData = dbContext.ApplicationDatum.FirstOrDefault();
                 if (appData == null)
@@ -138,6 +103,48 @@ namespace SoftU2FDaemon
 
         #region System Tray Icon
 
+        private void InitializeTrayIcon()
+        {
+            _trayMenu = new ContextMenu();
+            _trayMenu.MenuItems.Add("Exit", ((sender, args) =>
+            {
+                Application.Exit();
+            }));
+
+            _trayMenu.MenuItems.Add("Reset", (sender, args) =>
+            {
+                var confirm = MessageBox.Show("Do you want to reset SoftU2F? this will delete all your local data.",
+                    "Reset Database", MessageBoxButton.YesNo);
+                if (confirm != MessageBoxResult.Yes)
+                {
+                    MessageBox.Show("Reset cancelled");
+                    return;
+                }
+
+                if (File.Exists(DBPath))
+                {
+                    var bak = $"{DBPath}.bak";
+                    if (File.Exists(bak)) File.Delete(bak);
+                    File.Move(DBPath, bak);
+                    Restart();
+                }
+            });
+
+
+            components = new Container();
+
+            _trayIcon = new NotifyIcon(components)
+            {
+                Text = "SoftU2F Daemon",
+                ContextMenu = _trayMenu,
+                Icon = new Icon("key.ico"),
+                Visible = true
+            };
+
+            _trayIcon.BalloonTipClicked += (sender, args) => _userPresenceCallback?.Invoke(true);
+            _trayIcon.BalloonTipShown += (sender, args) => _notificationOpen = true;
+            _trayIcon.BalloonTipClosed += (sender, args) => _notificationOpen = false;
+        }
         protected override void OnLoad(EventArgs e)
         {
             Visible = false;
@@ -159,9 +166,11 @@ namespace SoftU2FDaemon
 
         #endregion
 
+        #region UserPresence
 
         private Action<bool> _userPresenceCallback;
         private readonly object _userPresenceCallbackLock = new object();
+        private bool _notificationOpen;
         private Action<bool> UserPresenceCallback
         {
             set
@@ -175,8 +184,11 @@ namespace SoftU2FDaemon
         }
         public void Send(string title, string message, Action<bool> userClicked)
         {
+            if (_notificationOpen) return;
             _trayIcon.ShowBalloonTip((int)TimeSpan.FromSeconds(10).TotalMilliseconds, title, message, ToolTipIcon.Info);
             UserPresenceCallback = userClicked;
         }
+
+        #endregion
     }
 }

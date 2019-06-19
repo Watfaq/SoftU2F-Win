@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U2FLib", "U2FLib\U2FLib.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoftU2FDaemon", "SoftU2FDaemon\SoftU2FDaemon.csproj", "{DA6EEE3B-38E8-414B-BDBF-AD3B80BC5950}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustTest", "JustTest\JustTest.csproj", "{551530B9-2C88-430A-B669-06F481FBB658}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -127,6 +129,26 @@ Global
 		{DA6EEE3B-38E8-414B-BDBF-AD3B80BC5950}.Release|x64.Build.0 = Release|Any CPU
 		{DA6EEE3B-38E8-414B-BDBF-AD3B80BC5950}.Release|x86.ActiveCfg = Release|Any CPU
 		{DA6EEE3B-38E8-414B-BDBF-AD3B80BC5950}.Release|x86.Build.0 = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|ARM.Build.0 = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|ARM64.ActiveCfg = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|ARM64.Build.0 = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|x64.Build.0 = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Debug|x86.Build.0 = Debug|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|Any CPU.Build.0 = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|ARM.ActiveCfg = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|ARM.Build.0 = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|ARM64.ActiveCfg = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|ARM64.Build.0 = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|x64.ActiveCfg = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|x64.Build.0 = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|x86.ActiveCfg = Release|Any CPU
+		{551530B9-2C88-430A-B669-06F481FBB658}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

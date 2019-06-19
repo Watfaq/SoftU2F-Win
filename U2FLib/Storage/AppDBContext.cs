@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 namespace U2FLib.Storage
 {
@@ -18,6 +19,19 @@ namespace U2FLib.Storage
         {
             var dbPath = Environment.GetEnvironmentVariable("DBPath");
             optionsBuilder.UseSqlite($"Filename = {dbPath}");
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<KeyPair>()
+                .Property(b => b.ApplicationTag)
+                .HasField("_applicationTag").UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<KeyPair>()
+                .Property(b => b.PrivateKey)
+                .HasField("_privateKey").UsePropertyAccessMode(PropertyAccessMode.Field);
+            modelBuilder.Entity<KeyPair>()
+                .Property(b => b.PublicKey)
+                .HasField("_publicKey").UsePropertyAccessMode(PropertyAccessMode.Field);
         }
 
         public DbSet<KeyPair> KeyPairs { get; set; }

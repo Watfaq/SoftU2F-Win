@@ -9,16 +9,16 @@ using U2FLib.Storage;
 namespace U2FLib.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20190616192238_InitialCreate")]
+    [Migration("20190619171922_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "3.0.0-preview6.19304.10");
+                .HasAnnotation("ProductVersion", "2.2.4-servicing-10062");
 
-            modelBuilder.Entity("SoftU2F.Console.Storage.ApplicationData", b =>
+            modelBuilder.Entity("U2FLib.Storage.ApplicationData", b =>
                 {
                     b.Property<uint>("Id")
                         .ValueGeneratedOnAdd();
@@ -30,9 +30,10 @@ namespace U2FLib.Migrations
                     b.ToTable("ApplicationDatum");
                 });
 
-            modelBuilder.Entity("SoftU2F.Console.Storage.KeyPair", b =>
+            modelBuilder.Entity("U2FLib.Storage.KeyPair", b =>
                 {
-                    b.Property<string>("KeyHandle");
+                    b.Property<string>("KeyHandle")
+                        .ValueGeneratedOnAdd();
 
                     b.Property<byte[]>("ApplicationTag");
 
