@@ -8,13 +8,17 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using U2FLib.Storage;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Win32;
 using U2FLib;
 using Application = System.Windows.Forms.Application;
+using ContextMenu = System.Windows.Forms.ContextMenu;
+using MenuItem = System.Windows.Forms.MenuItem;
 using MessageBox = System.Windows.MessageBox;
 
 namespace SoftU2FDaemon
@@ -30,8 +34,9 @@ namespace SoftU2FDaemon
 
         #region App settings
 
+        private static readonly string BinName = typeof(App).Assembly.GetName().Name;
         private static readonly string BinFolder = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), typeof(App).Assembly.GetName().Name);
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), BinName);
         private static readonly string DBPath = Path.Combine(
             BinFolder, "db.sqlite");
 
@@ -106,30 +111,15 @@ namespace SoftU2FDaemon
         private void InitializeTrayIcon()
         {
             _trayMenu = new ContextMenu();
-            _trayMenu.MenuItems.Add("Exit", ((sender, args) =>
-            {
-                Application.Exit();
-            }));
 
-            _trayMenu.MenuItems.Add("Reset", (sender, args) =>
-            {
-                var confirm = MessageBox.Show("Do you want to reset SoftU2F? this will delete all your local data.",
-                    "Reset Database", MessageBoxButton.YesNo);
-                if (confirm != MessageBoxResult.Yes)
-                {
-                    MessageBox.Show("Reset cancelled");
-                    return;
-                }
+            var item = new MenuItem("Auto Start");
+            item.Checked = AutoStart();
+            item.Click += OnAutoStartClick;
+            _trayMenu.MenuItems.Add(item);
 
-                if (File.Exists(DBPath))
-                {
-                    var bak = $"{DBPath}.bak";
-                    if (File.Exists(bak)) File.Delete(bak);
-                    File.Move(DBPath, bak);
-                    Restart();
-                }
-            });
-
+            _trayMenu.MenuItems.Add("Reset", OnResetClickedOnClick);
+            _trayMenu.MenuItems.Add("-");
+            _trayMenu.MenuItems.Add("Exit", (sender, args) => Application.Exit());
 
             components = new Container();
 
@@ -145,6 +135,55 @@ namespace SoftU2FDaemon
             _trayIcon.BalloonTipShown += (sender, args) => _notificationOpen = true;
             _trayIcon.BalloonTipClosed += (sender, args) => _notificationOpen = false;
         }
+
+        private void OnAutoStartClick(object sender, EventArgs e)
+        {
+            if (AutoStart())
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                {
+                    key?.DeleteValue(BinName, false);
+                }
+            }
+            else
+            {
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                {
+                    key?.SetValue(BinName, "\"" + Application.ExecutablePath + "\"");
+                }
+            }
+
+            var item = (MenuItem) sender;
+            item.Checked = !item.Checked;
+        }
+
+        private bool AutoStart()
+        {
+            using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+            {
+                return key != null && key.GetValueNames().Any(v => v == BinName);
+            }
+        }
+
+        private void OnResetClickedOnClick(object sender, EventArgs args)
+        {
+            var confirm = MessageBox.Show("Do you want to reset SoftU2F? this will delete all your local data.",
+                "Reset Database", MessageBoxButton.YesNo);
+            if (confirm != MessageBoxResult.Yes)
+            {
+                MessageBox.Show("Reset cancelled");
+                return;
+            }
+
+            if (File.Exists(DBPath))
+            {
+                var bak = $"{DBPath}.bak";
+                if (File.Exists(bak)) File.Delete(bak);
+                File.Move(DBPath, bak);
+                Restart();
+            }
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             Visible = false;
@@ -171,6 +210,7 @@ namespace SoftU2FDaemon
         private Action<bool> _userPresenceCallback;
         private readonly object _userPresenceCallbackLock = new object();
         private bool _notificationOpen;
+
         private Action<bool> UserPresenceCallback
         {
             set
