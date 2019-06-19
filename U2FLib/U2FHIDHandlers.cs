@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using SystemTray.Storage;
+using U2FLib.Storage;
 using APDU;
 
-namespace U2FHID
+namespace U2FLib
 {
     partial class BackgroundTask
     {
@@ -29,7 +29,7 @@ namespace U2FHID
             if (!UserPresence.Present)
             {
                 UserPresence.AskAsync(UserPresence.PresenceType.Registration, facet);
-                return CreateError(ProtocolErrorCode.ConditionNoSatisfied);
+                return null;  // instead of ConditionNoSatisfied, just return null here, so that Chrome won't flood.
             }
 
             UserPresence.Take();
@@ -77,7 +77,7 @@ namespace U2FHID
             if (!UserPresence.Present)
             {
                 UserPresence.AskAsync(UserPresence.PresenceType.Authentication, facet);
-                return CreateError(ProtocolErrorCode.ConditionNoSatisfied);
+                return null;  // instead of ConditionNoSatisfied, just return null here, so that Chrome won't flood.
             }
 
             UserPresence.Take();

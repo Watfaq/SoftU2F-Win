@@ -5,13 +5,19 @@ using System.Text;
 using System.Windows;
 using Microsoft.EntityFrameworkCore;
 
-namespace SystemTray.Storage
+namespace U2FLib.Storage
 {
     public class AppDbContext : DbContext
     {
+        public AppDbContext() { }
+
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite($"Filename={App.DBPath}");
+            var dbPath = Environment.GetEnvironmentVariable("DBPath");
+            optionsBuilder.UseSqlite($"Filename = {dbPath}");
         }
 
         public DbSet<KeyPair> KeyPairs { get; set; }

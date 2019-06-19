@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SystemTray.Storage;
+using U2FLib.Storage;
 
-namespace SystemTray.Migrations
+namespace U2FLib.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20190616192238_InitialCreate")]

@@ -9,7 +9,7 @@ using APDU;
 
 #pragma warning disable CS0414
 
-namespace U2FHID
+namespace U2FLib
 {
     partial class BackgroundTask
     {

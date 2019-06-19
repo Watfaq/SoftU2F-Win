@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using SystemTray.Storage;
+using U2FLib.Storage;
 
-namespace U2FHID
+namespace U2FLib
 {
     public class U2FRegistration
     {

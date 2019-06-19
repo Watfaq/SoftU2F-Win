@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace SystemTray.Migrations
+namespace U2FLib.Migrations
 {
     public partial class InitialCreate : Migration
     {

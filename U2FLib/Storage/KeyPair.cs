@@ -1,55 +1,28 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 using Org.BouncyCastle.Asn1.Nist;
-using Org.BouncyCastle.Asn1.Sec;
 using Org.BouncyCastle.Asn1.X9;
-using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Generators;
 using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
-using Org.BouncyCastle.X509;
 
-namespace SystemTray.Storage
+namespace U2FLib.Storage
 {
     public class KeyPair
     {
-        private static string ECDSA = "ECDSA";
-        private static string NISTP256 = "P-256"; // http://oid-info.com/get/1.2.840.10045.3.1.7
+        private static readonly string ECDSA = "ECDSA";
+        private static readonly string NISTP256 = "P-256";
         private static readonly SecureRandom secureRandom = new SecureRandom();
         private static readonly X9ECParameters curve = NistNamedCurves.GetByName(NISTP256);
-        private static readonly ECDomainParameters domain = new ECDomainParameters(curve.Curve, curve.G, curve.N, curve.H);
+
+        private static readonly ECDomainParameters domain =
+            new ECDomainParameters(curve.Curve, curve.G, curve.N, curve.H);
 
         private byte[] _applicationTag;
         private byte[] _privateKey;
         private byte[] _publicKey;
-
-        public string Label { get; set; }
-
-        [Key]
-        public string KeyHandle { get; set; }
-
-        public byte[] ApplicationTag
-        {
-            get => UnProtect(_applicationTag);
-            set => _applicationTag = Protect(value);
-        }
-
-        public byte[] PublicKey
-        {
-            get => UnProtect(_publicKey);
-            set => _publicKey = Protect(value);
-        }
-
-        public byte[] PrivateKey
-        {
-            get => UnProtect(_privateKey);
-            set => _privateKey = Protect(value);
-        }
 
 
         public KeyPair()
@@ -68,10 +41,32 @@ namespace SystemTray.Storage
 
             PrivateKey = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private).GetDerEncoded();
 
-            var ecPublicKey = (ECPublicKeyParameters)(keyPair.Public);
+            var ecPublicKey = (ECPublicKeyParameters) keyPair.Public;
             PublicKey = ecPublicKey.Q.GetEncoded();
 
             KeyHandle = Convert.ToBase64String(sha512(PublicKey));
+        }
+
+        public string Label { get; set; }
+
+        [Key] public string KeyHandle { get; set; }
+
+        public byte[] ApplicationTag
+        {
+            get => UnProtect(_applicationTag);
+            set => _applicationTag = Protect(value);
+        }
+
+        public byte[] PublicKey
+        {
+            get => UnProtect(_publicKey);
+            set => _publicKey = Protect(value);
+        }
+
+        public byte[] PrivateKey
+        {
+            get => UnProtect(_privateKey);
+            set => _privateKey = Protect(value);
         }
 
         private static byte[] Protect(byte[] data)
@@ -92,7 +87,7 @@ namespace SystemTray.Storage
             {
                 return ProtectedData.Unprotect(data, null, DataProtectionScope.CurrentUser);
             }
-            catch
+            catch (Exception e)
             {
                 return null;
             }

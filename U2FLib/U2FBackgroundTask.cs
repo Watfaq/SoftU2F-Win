@@ -11,9 +11,9 @@ using APDU;
 
 #pragma warning disable CS0414
 
-namespace U2FHID
+namespace U2FLib
 {
-    #region
+    #region Constants
 
     using LPSECURITY_ATTRIBUTES = IntPtr;
     using LPOVERLAPPED = IntPtr;
@@ -25,7 +25,12 @@ namespace U2FHID
 
     #endregion
 
-    public sealed partial class BackgroundTask
+    public interface IU2FBackgroundTask
+    {
+        void StartIoLoop(CancellationToken token);
+    }
+
+    public sealed partial class BackgroundTask : IU2FBackgroundTask
     {
 
         private static IntPtr _device;
