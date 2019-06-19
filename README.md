@@ -12,7 +12,11 @@ The app runs in the background. When a site loaded in a U2F-compatible browser a
 
 ### Registration
 
+![Registration](https://user-images.githubusercontent.com/543405/59797397-e9ab4e80-9322-11e9-9f36-555b608f926d.png)
+
 ### Authentication
+
+![Authentication](https://user-images.githubusercontent.com/543405/59797166-6c7fd980-9322-11e9-952d-c3f353a09a65.png)
 
 ## Uninstalling
 
