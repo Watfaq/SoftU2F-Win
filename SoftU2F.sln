@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "U2FLib", "U2FLib\U2FLib.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SoftU2FDaemon", "SoftU2FDaemon\SoftU2FDaemon.csproj", "{DA6EEE3B-38E8-414B-BDBF-AD3B80BC5950}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JustTest", "JustTest\JustTest.csproj", "{551530B9-2C88-430A-B669-06F481FBB658}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JustTest", "JustTest\JustTest.csproj", "{551530B9-2C88-430A-B669-06F481FBB658}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -77,6 +77,7 @@ Global
 		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Debug|x86.Build.0 = Debug|Win32
 		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Debug|x86.Deploy.0 = Debug|Win32
 		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Release|Any CPU.ActiveCfg = Release|Win32
+		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Release|Any CPU.Build.0 = Release|Win32
 		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Release|ARM.ActiveCfg = Release|ARM
 		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Release|ARM.Build.0 = Release|ARM
 		{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}.Release|ARM.Deploy.0 = Release|ARM

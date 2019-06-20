@@ -92,6 +92,13 @@ namespace SoftU2FDaemon
         private void InitializeBackgroundDaemon()
         {
             var daemon = _serviceProvider.GetService<IU2FBackgroundTask>();
+            if (!daemon.OpenDevice())
+            {
+                MessageBox.Show("Failed to load driver. Maybe installation was unsuccessful\nExiting", "Driver Error");
+                if (Application.MessageLoop) Application.Exit();
+                Environment.Exit(1);
+                return;
+            }
             (new Thread(() => { daemon.StartIoLoop(_cancellation.Token); })).Start();
             UserPresence.Sender = this;
         }

@@ -28,6 +28,7 @@ namespace U2FLib
     public interface IU2FBackgroundTask
     {
         void StartIoLoop(CancellationToken token);
+        bool OpenDevice();
     }
 
     public sealed partial class BackgroundTask : IU2FBackgroundTask
@@ -37,7 +38,6 @@ namespace U2FLib
 
         public BackgroundTask()
         {
-            openDevice();
         }
 
         public void StartIoLoop(CancellationToken token)
@@ -91,14 +91,15 @@ namespace U2FLib
            
         }
 
-        private void openDevice()
+        public bool OpenDevice()
         {
             var ptr = GetInterfaceDevicePath();
+            if (ptr == IntPtr.Zero) return false;
             var devicePath = Marshal.PtrToStringUni(ptr);
             _device = CreateFile(devicePath, FILE_READ_DATA | FILE_WRITE_DATA, FILE_SHARE_READ | FILE_SHARE_WRITE,
                 IntPtr.Zero,
                 OPEN_EXISTING, 0, 0);
-            if (_device == IntPtr.Zero) throw new Exception("Cant open handle");
+            return _device != IntPtr.Zero;
         }
     }
 }
