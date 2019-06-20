@@ -10,24 +10,31 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  project: 'SoftU2FDaemon/*.csproj'
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@0
-
-- task: NuGetCommand@2
+- task: DotNetCoreInstaller@0
   inputs:
-    restoreSolution: '$(solution)'
+    version: 'v3.0.0-preview6' # replace this value with the version that you need for your project
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
   inputs:
-    solution: '$(solution)'
-    platform: 'x86'
-    configuration: '$(buildConfiguration)'
+    command: restore
+    projects: $(project)
+    feedsToUse: config
 
-- task: VSBuild@1
+- task: DotNetCoreCLI@2
+  displayName: Publish win10-x64
   inputs:
-    solution: '$(solution)'
-    platform: 'x64'
-    configuration: '$(buildConfiguration)'
+    command: publish
+    projects: $(project)
+    arguments: '--configuration Release -r win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x64' # Update this to match your need
+
+- task: DotNetCoreCLI@2
+  displayName: Publish win10-x86
+  inputs:
+    command: publish
+    projects: $(project)
+    arguments: '--configuration Release -r win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x86' # Update this to match your need
+
