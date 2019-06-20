@@ -1,4 +1,4 @@
-Soft U2F is a software U2F authenticator for Windows. It emulates a hardware U2F HID device and performs cryptographic operations using the DPAPI. This tool works with Google Chrome.
+Soft U2F is a software U2F authenticator for Windows. It emulates a hardware U2F HID device and performs cryptographic operations using the DPAPI. This tool works with Google Chrome. Running on other browsers hasn't been tested.
 
 We take the security of this project seriously. Report any security vulnerabilities to i#xiaoba.me
 
@@ -23,6 +23,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 * Install [.NETCore 3.0](https://dotnet.microsoft.com/download/dotnet-core/3.0) runtime
   Select the latest version under column **Run apps - Runtime**
+  If installing runtime doesn't work, due to some reason, please install the lastest full SDK instead.
 
 ### Driver
 
