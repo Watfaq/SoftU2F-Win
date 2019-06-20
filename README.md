@@ -82,6 +82,16 @@ At this stage, I'm still trying to get a EV Certificate to sign this driver, so 
 
 Having a signature won't change any of the behaviour of this software and all the source code is public to everyone to read and contribute.
 
+## Support
+
+If you like this project, you can support me to buy a EV certificate, or just a cup of coffee :)
+
+* [`PayPal`](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4HZETSUYU29T8&currency_code=USD&source=url)
+
+* [`₿TC`](https://www.blockchain.com/btc/payment_request?address=14WABfFsMR51oP5LgJZEzSP5dLoBxymop3&message=Support+SoftU2F)
+
+* [`EOS`](https://eosauthority.com/account?account=eosgolangsdk&network=eos#transactions)
+
 ## Known app-IDs/facets
 
 Every website using U2F has an app-ID. For example, the app-ID of [Yubico's U2F demo page](https://demo.yubico.com/u2f) is `https://demo.yubico.com`. When the low-level U2F authenticator receives a request to register/authenticate a website, it doesn't receive the friendly app-ID string. Instead, it receives a SHA256 digest of the app-ID. To be able to show a helpful alert message when a website is trying to register/authenticate, a list of app-ID digests is maintained in this repository. You can find the list [here](https://github.com/ibigbug/SoftU2F-Win/blob/master/APDU/KnownFacets.cs). If your company's app-ID is missing from this list, open a pull request to add it.
