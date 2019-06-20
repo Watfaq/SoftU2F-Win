@@ -32,7 +32,6 @@
 
   <ItemGroup>
     <Resources Include="$(ProjectDir)Resources\*.*" />
-    <Driver Include="$(ProjectDir)..\$(Configuration)\SoftU2FDriver\*.*" />
   </ItemGroup>
 
   <Target Name="CopyFiles" AfterTargets="Build">
@@ -41,9 +40,7 @@
   </Target>
 
   <Target Name="CopyToPublish" AfterTargets="Publish">
-
     <Copy SourceFiles="..\U2FLib\NativeBridge.dll" DestinationFolder="$(PublishDir)" />
     <Copy SourceFiles="@(Resources)" DestinationFolder="$(PublishDir)" />
-    <Copy SourceFiles="@(Driver)" DestinationFolder="$(PublishDir)" />
   </Target>
 </Project>
