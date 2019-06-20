@@ -131,7 +131,11 @@ namespace SoftU2FDaemon
                 Visible = true
             };
 
-            _trayIcon.BalloonTipClicked += (sender, args) => _userPresenceCallback?.Invoke(true);
+            _trayIcon.BalloonTipClicked += (sender, args) =>
+            {
+                _notificationOpen = false;
+                _userPresenceCallback?.Invoke(true);
+            };
             _trayIcon.BalloonTipShown += (sender, args) => _notificationOpen = true;
             _trayIcon.BalloonTipClosed += (sender, args) => _notificationOpen = false;
         }

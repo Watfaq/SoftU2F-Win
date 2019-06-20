@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Text;
 using U2FLib.Storage;
 using APDU;
 
@@ -9,18 +10,18 @@ namespace U2FLib
 {
     partial class BackgroundTask
     {
-        private IRawConvertible HandleVersionRequest(byte[] rawData, BackgroundTask.IO_CTL_XFER_MESSAGE request)
+        private IRawConvertible HandleVersionRequest(byte[] rawData, IO_CTL_XFER_MESSAGE request)
         {
 
             var _ = new VersionRequest(rawData); // validate request data;
             return new VersionResponse("U2F_V2");
         }
 
-        private IRawConvertible HandleRegisterRequest(byte[] rawData, BackgroundTask.IO_CTL_XFER_MESSAGE request)
+        private IRawConvertible HandleRegisterRequest(byte[] rawData, IO_CTL_XFER_MESSAGE request)
         {
             var req = new RegisterRequest(rawData);
             var facet = KnownFacets.GetKnownFacet(req.ApplicationParameter);
-
+            var ss = Encoding.UTF8.GetString(req.ApplicationParameter);
             if (facet == "bogus")
             {
                 return CreateError(ProtocolErrorCode.OtherError);
