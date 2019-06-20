@@ -4,7 +4,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 ## Installing
 
-> **This app is still under very active development, use it on your own risk please.**
+> **This app is still under very active development. It may have bugs or doesn't work in some scenarios. Please don't use for production.**
 
 
 ### Prerequisites
@@ -23,6 +23,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 * Install [.NETCore 3.0](https://dotnet.microsoft.com/download/dotnet-core/3.0) runtime
   Select the latest version under column **Run apps - Runtime**
+  
   If installing runtime doesn't work, due to some reason, please install the lastest full SDK instead.
 
 ### Driver
