@@ -14,6 +14,12 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+
+- task: NuGetToolInstaller@0
+  inputs:
+    versionSpec: '5.1.0' 
+    #checkLatest: false # Optional
+
 - task: DotNetCoreInstaller@0
   inputs:
     version: '3.0.100-preview6-012264' # replace this value with the version that you need for your project
