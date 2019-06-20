@@ -1,0 +1,9 @@
+{
+    "publishOptions": {
+      "include": [
+        "Driver",
+        "Resource",
+        "../U2FLib/NativeBridge.dll"
+      ]
+    }
+  }

@@ -127,7 +127,7 @@ namespace SoftU2FDaemon
             {
                 Text = "SoftU2F Daemon",
                 ContextMenu = _trayMenu,
-                Icon = new Icon("key.ico"),
+                Icon = new Icon("tray.ico"),
                 Visible = true
             };
 

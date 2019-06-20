@@ -16,10 +16,6 @@
     <PackageTags>u2f,security</PackageTags>
   </PropertyGroup>
 
-  <Target Name="CopyResource" AfterTargets="Build">
-    <Copy DestinationFolder="$(OutDir)" SourceFiles="Resources\lock.ico" />
-    <Copy DestinationFolder="$(OutDir)" SourceFiles="Resources\key.ico" />
-  </Target>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.0.0-preview6.19304.6" />
@@ -31,8 +27,20 @@
     <ProjectReference Include="..\U2FLib\U2FLib.csproj" />
   </ItemGroup>
 
-  <!--TODO: make this dep implicit-->
+  <ItemGroup>
+    <Resources Include="$(ProjectDir)Resources\*.*" />
+    <Driver Include="$(ProjectDir)Driver\*.*" />
+  </ItemGroup>
+
   <Target Name="CopyFiles" AfterTargets="Build">
     <Copy SourceFiles="..\U2FLib\NativeBridge.dll" DestinationFolder="$(OutDir)" />
+    <Copy SourceFiles="@(Resources)" DestinationFolder="$(OutDir)" />
+  </Target>
+
+  <Target Name="CopyToPublish" AfterTargets="Publish">
+
+    <Copy SourceFiles="..\U2FLib\NativeBridge.dll" DestinationFolder="$(PublishDir)" />
+    <Copy SourceFiles="@(Resources)" DestinationFolder="$(PublishDir)" />
+    <Copy SourceFiles="@(Driver)" DestinationFolder="$(PublishDir)" />
   </Target>
 </Project>
