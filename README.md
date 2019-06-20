@@ -4,7 +4,37 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 ## Installing
 
-Coming Soon.
+> **This app is still under very active development, use it on your own risk please.**
+
+
+### Prerequisites
+
+* Disable [Driver Signing Enforcement](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-policy--windows-vista-and-later-)
+
+  To install the driver, you'll need to disable the driver signing enforcement.
+
+  The easiest way to do this is putting you device into Test Mode. Run this in elevated prompt
+
+  ```
+  $ bcdedit /set TESTSIGNING OFF
+  ```
+
+  More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
+
+* Install [.NETCore 3.0](https://dotnet.microsoft.com/download/dotnet-core/3.0) runtime
+  Select the latest version under column **Run apps - Runtime**
+
+### Driver
+
+1. Download the latest driver release at [Driver Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/driver-06212019)
+
+2. Run the `driver-install.ps1` in elevated powershell.
+
+### Daemon
+
+1. Download the SoftU2FDaemon release at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-1.0.0)
+
+2. Extrat and Run SoftU2FDaemon.exe
 
 ## Usage
 
@@ -20,7 +50,15 @@ The app runs in the background. When a site loaded in a U2F-compatible browser a
 
 ## Uninstalling
 
-Coming Soon.
+### Driver
+
+1. Right Click the Windows logo on you status bar and open Device Manager
+2. Under Human Interface Devices, find **SoftU2F Device**, right click and select **Uninstall Device**
+
+### Daemon
+
+1. Exit App
+2. Delete the folder where you extracted them.
 
 ## Security considerations
 
@@ -31,6 +69,18 @@ Instead of macOS Keychain, we store data using Windows DPAPI, which is designed 
 For more infomation of DPAPI: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.protecteddata?view=netframework-4.8#remarks
 
 A [note](https://github.com/github/SoftU2F#security-considerations) from Github Team
+
+## Signing
+
+Announced by Microsoft,
+
+> Note  Windows 10 for desktop editions (Home, Pro, Enterprise, and Education) and Windows Server 2016 kernel-mode drivers must be signed by the Windows Hardware Dev Center Dashboard, which requires an EV certificate. For details, see [Driver Signing Policy](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-policy--windows-vista-and-later-).
+
+Windows will only trust the drivers signed by a [trusted EV certificate](https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/get-a-code-signing-certificate#step-2-buy-a-new-code-signing-certificate).
+
+At this stage, I'm still trying to get a EV Certificate to sign this driver, so that Disabling driver signature enforcement won't be needed to run this software.
+
+Having a signature won't change any of the behaviour of this software and all the source code is public to everyone to read and contribute.
 
 ## Known app-IDs/facets
 
