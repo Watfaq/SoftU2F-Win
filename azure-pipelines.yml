@@ -16,7 +16,7 @@ variables:
 steps:
 - task: DotNetCoreInstaller@0
   inputs:
-    version: 'v3.0.0-preview6' # replace this value with the version that you need for your project
+    version: '3.x' # replace this value with the version that you need for your project
 
 - task: DotNetCoreCLI@2
   inputs:
