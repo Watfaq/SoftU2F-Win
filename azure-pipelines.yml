@@ -24,11 +24,7 @@ steps:
   inputs:
     version: '3.0.100-preview6-012264' # replace this value with the version that you need for your project
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: restore
-    projects: $(project)
-    feedsToUse: config
+- script: dotnet restore
 
 - task: DotNetCoreCLI@2
   displayName: Publish win10-x64
