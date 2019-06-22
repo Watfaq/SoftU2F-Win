@@ -26,19 +26,10 @@ steps:
 
 - script: dotnet restore
 
-- task: DotNetCoreCLI@2
-  displayName: Publish win10-x64
-  inputs:
-    command: publish
-    projects: $(project)
-    arguments: '--configuration Release -r win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x64' # Update this to match your need
 
-- task: DotNetCoreCLI@2
-  displayName: Publish win10-x86
-  inputs:
-    command: publish
-    projects: $(project)
-    arguments: '--configuration Release -r win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x86' # Update this to match your need
+- script: dotnet publish $(project) --configuration Release --runtime win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x64 
+- script: dotnet publish $(project) --configuration Release --runtime win10-x86 --output $(Build.ArtifactStagingDirectory)/win10-x86
+
 
 - task: ArchiveFiles@2
   inputs:
