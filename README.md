@@ -36,7 +36,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 ### Daemon
 
-1. Download the SoftU2FDaemon release at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-1.0.0)
+1. Download the SoftU2FDaemon release at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
 
 2. Extrat and Run SoftU2FDaemon.exe
 
