@@ -32,6 +32,9 @@ PWCHAR GetInterfaceDevicePath()
 
 	deviceInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
 
+	printf("\nList of Toaster Device Interfaces\n");
+	printf("---------------------------------\n");
+
 	do
 	{
 		if (SetupDiEnumDeviceInterfaces(
@@ -88,6 +91,9 @@ PWCHAR GetInterfaceDevicePath()
 				free(deviceInterfaceDetailData);
 				return NULL;
 			}
+
+			printf("%d) %s\n", i,
+				deviceInterfaceDetailData->DevicePath);
 		}
 		else if (GetLastError() != ERROR_NO_MORE_ITEMS)
 		{
