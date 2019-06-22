@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
@@ -27,7 +28,6 @@ namespace SoftU2FDaemon
     {
         private NotifyIcon _trayIcon;
         private ContextMenu _trayMenu;
-        private IContainer components;
         private CancellationTokenSource _cancellation;
 
         private IServiceProvider _serviceProvider;
@@ -56,6 +56,18 @@ namespace SoftU2FDaemon
             InitializeTrayIcon();
             InitializeBackgroundDaemon();
         }
+
+        #region Application LifeCycle
+
+        IntPtr lastActiveWin = IntPtr.Zero;
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        static extern IntPtr GetForegroundWindow();
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool SetForegroundWindow(IntPtr hWnd);
+        #endregion
 
         #region Application Initialization
 
@@ -128,22 +140,27 @@ namespace SoftU2FDaemon
             _trayMenu.MenuItems.Add("-");
             _trayMenu.MenuItems.Add("Exit", (sender, args) => Application.Exit());
 
-            components = new Container();
-
-            _trayIcon = new NotifyIcon(components)
+            _trayIcon = new NotifyIcon
             {
                 Text = "SoftU2F Daemon",
                 ContextMenu = _trayMenu,
                 Icon = new Icon("tray.ico"),
-                Visible = true
+                Visible = true,
             };
 
             _trayIcon.BalloonTipClicked += (sender, args) =>
             {
+                if (lastActiveWin != IntPtr.Zero)
+                    SetForegroundWindow(lastActiveWin);
+
                 _notificationOpen = false;
                 _userPresenceCallback?.Invoke(true);
             };
-            _trayIcon.BalloonTipShown += (sender, args) => _notificationOpen = true;
+            _trayIcon.BalloonTipShown += (sender, args) =>
+            {
+                _notificationOpen = true;
+                lastActiveWin = GetForegroundWindow();
+            };
             _trayIcon.BalloonTipClosed += (sender, args) => _notificationOpen = false;
         }
 
@@ -202,16 +219,31 @@ namespace SoftU2FDaemon
             base.OnLoad(e);
         }
 
+        #endregion
+
+        #region IDisposable
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private bool disposed = false;
         protected override void Dispose(bool disposing)
         {
+            if (disposed) return;
             if (disposing)
             {
-                components?.Dispose();
+
+                _cancellation.Cancel();
             }
-
-            _cancellation.Cancel();
-
             base.Dispose(disposing);
+        }
+
+        ~App()
+        {
+            Dispose(true);
         }
 
         #endregion
