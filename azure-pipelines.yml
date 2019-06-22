@@ -25,14 +25,20 @@ steps:
     version: '3.0.100-preview6-012264' # replace this value with the version that you need for your project
 
 - script: dotnet restore
+  displayName: Restore packages
 
 
-- script: dotnet publish --configuration Release --runtime win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x64 --version-suffix $(Build.BuildNumber)
+- script: dotnet publish
+          --configuration Release
+          --runtime win10-x64
+          --output $(Build.ArtifactStagingDirectory)/win10-x64
+          --version-suffix $(Build.BuildNumber)
   displayName: Publish win10-x64 Self-contained deployments (SCD)
   workingDirectory: $(Build.SourcesDirectory)\SoftU2FDaemon
-  
+
 
 - task: ArchiveFiles@2
+  displayName: Archive  win10-x64 Self-contained deployments (SCD)
   inputs:
     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/win10-x64'
     includeRootFolder: false
@@ -40,10 +46,19 @@ steps:
     archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-x64-$(Build.BuildId).zip'
     replaceExistingArchive: true
 
+- script: dotnet publish
+          --configuration Release
+          --framework netcoreapp3.0
+          --output $(Build.ArtifactStagingDirectory)/netcoreapp3.0
+          --version-suffix $(Build.BuildNumber)
+  displayName: Publish netcoreapp3.0 Framework-dependent executables (FDE)
+  workingDirectory: $(Build.SourcesDirectory)\SoftU2FDaemon
+
 - task: ArchiveFiles@2
+  displayName: Archive netcoreapp3.0 Framework-dependent executables (FDE)
   inputs:
-    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/win10-x86'
+    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/netcoreapp3.0'
     includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-x86-$(Build.BuildId).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-netcoreapp3.0-$(Build.BuildId).zip'
     replaceExistingArchive: true
