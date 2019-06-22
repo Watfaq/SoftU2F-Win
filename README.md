@@ -23,11 +23,6 @@ We take the security of this project seriously. Report any security vulnerabilit
 
   More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
 
-* Install [.NETCore 3.0](https://dotnet.microsoft.com/download/dotnet-core/3.0) runtime
-  Select the latest version under column **Run apps - Runtime**
-  
-  If installing runtime doesn't work, due to some reason, please install the lastest full SDK instead.
-
 ### Driver
 
 1. Download the latest driver release at [Driver Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/driver-06212019)
@@ -36,7 +31,10 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 ### Daemon
 
-1. Download the SoftU2FDaemon release at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
+1. Download
+
+  * If you have latest .NET Core 3.0 SDK/Runtime installed you can download the FDE(Framework dependent executable) at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
+  * Otherwise you can download the SCD(Self-contained deployment) at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
 
 2. Extrat and Run SoftU2FDaemon.exe
 
