@@ -65,11 +65,11 @@ steps:
     rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/netcoreapp3.0'
     includeRootFolder: false
     archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-netcoreapp3.0-FDE-$(Build.BuildNumber).zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-FDE-netcoreapp3.0-$(Build.BuildNumber).zip'
     replaceExistingArchive: true
 
 - task: PublishPipelineArtifact@1
   displayName: Publish netcoreapp3.0-FDE to artifacts
   inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-netcoreapp3.0-FDE-$(Build.BuildNumber).zip'
+    targetPath: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-FDE-netcoreapp3.0-$(Build.BuildNumber).zip'
     artifact: 'netcoreapp3.0-FDE'
