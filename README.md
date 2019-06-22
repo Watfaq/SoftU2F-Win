@@ -2,6 +2,8 @@ Soft U2F is a software U2F authenticator for Windows. It emulates a hardware U2F
 
 We take the security of this project seriously. Report any security vulnerabilities to i#xiaoba.me
 
+[![Build Status](https://watfaq.visualstudio.com/SoftU2F/_apis/build/status/ibigbug.SoftU2F-Win?branchName=master)](https://watfaq.visualstudio.com/SoftU2F/_build/latest?definitionId=7&branchName=master)
+
 ## Installing
 
 > **This app is still under very active development. It may have bugs or doesn't work in some scenarios. Please don't use for production.**
