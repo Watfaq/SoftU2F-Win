@@ -36,7 +36,6 @@ steps:
   displayName: Publish win10-x64 Self-contained deployments (SCD)
   workingDirectory: $(Build.SourcesDirectory)\SoftU2FDaemon
 
-
 - task: ArchiveFiles@2
   displayName: Archive  win10-x64 Self-contained deployments (SCD)
   inputs:
@@ -45,6 +44,12 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-x64-$(Build.BuildId).zip'
     replaceExistingArchive: true
+
+- task: PublishPipelineArtifact@1
+  displayName: Publish win10-x64-SCD to artifacts
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-x64-$(Build.BuildId).zip'
+    artifact: 'win10-x64-SCD'
 
 - script: dotnet publish
           --configuration Release
@@ -62,3 +67,9 @@ steps:
     archiveType: 'zip'
     archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-netcoreapp3.0-$(Build.BuildId).zip'
     replaceExistingArchive: true
+
+- task: PublishPipelineArtifact@1
+  displayName: Publish netcoreapp3.0-FDE to artifacts
+  inputs:
+    targetPath: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-netcoreapp3.0-$(Build.BuildId).zip'
+    artifact: 'netcoreapp3.0-FDE'
