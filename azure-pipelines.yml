@@ -27,9 +27,10 @@ steps:
 - script: dotnet restore
 
 
-- script: dotnet publish $(project) --configuration Release --runtime win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x64 
-- script: dotnet publish $(project) --configuration Release --runtime win10-x86 --output $(Build.ArtifactStagingDirectory)/win10-x86
-
+- script: dotnet publish --configuration Release --runtime win10-x64 --output $(Build.ArtifactStagingDirectory)/win10-x64 --version-suffix $(Build.BuildNumber)
+  displayName: Publish win10-x64 Self-contained deployments (SCD)
+  workingDirectory: $(Build.SourcesDirectory)\SoftU2FDaemon
+  
 
 - task: ArchiveFiles@2
   inputs:
