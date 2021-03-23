@@ -18,7 +18,7 @@ namespace APDU
             { GetDigest("https://www.gstatic.com/securitykey/origins.json"), "https://google.com" },
             { GetDigest("https://vault.bitwarden.com/app-id.json"), "https://vault.bitwarden.com" },
             { GetDigest("https://keepersecurity.com"), "https://keepersecurity.com" },
-            { GetDigest("https://api-9dcf9b83.duosecurity.com"), "https://api-9dcf9b83.duosecurity.com" },
+            { GetDigest("https://api-fdf6878a.duosecurity.com"), "https://api-fdf6878a.duosecurity.com" },
             { GetDigest("https://dashboard.stripe.com"), "https://dashboard.stripe.com" },
             { GetDigest("https://id.fedoraproject.org/u2f-origins.json"), "https://id.fedoraproject.org" },
             { GetDigest("https://lastpass.com"), "https://lastpass.com" },
