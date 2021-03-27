@@ -25,7 +25,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 ### Driver
 
-1. Download the latest driver release at [Driver Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/driver-06212019)
+1. Download the latest driver release at [Driver Release](https://github.com/SoftU2F/SoftU2F-Win/releases)
 
 2. Run the `driver-install.ps1` in elevated powershell.
 
