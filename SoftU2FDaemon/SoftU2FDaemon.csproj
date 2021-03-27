@@ -1,16 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>netcoreapp3.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <ApplicationIcon>Resources\tray.ico</ApplicationIcon>
-    <StartupObject />
+    <StartupObject>SoftU2FDaemon.App</StartupObject>
     <Authors>ibigbug</Authors>
     <Company>Watfaq</Company>
     <Product>SoftU2F</Product>
-    <Description>Software U2F authenticator for Windows 10
-</Description>
+    <Description>Software U2F authenticator for Windows 10</Description>
     <PackageProjectUrl>https://github.com/ibigbug/softu2f-win</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ibigbug/softu2f-win</RepositoryUrl>
     <PackageTags>u2f,security</PackageTags>
