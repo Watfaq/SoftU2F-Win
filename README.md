@@ -4,7 +4,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 [![Build Status](https://watfaq.visualstudio.com/SoftU2F/_apis/build/status/ibigbug.SoftU2F-Win?branchName=master)](https://watfaq.visualstudio.com/SoftU2F/_build/latest?definitionId=7&branchName=master)
 
-## Installing
+## Installation
 
 > **This app is still under very active development. It may have bugs or doesn't work in some scenarios. Please don't use for production.**
 
@@ -23,20 +23,12 @@ We take the security of this project seriously. Report any security vulnerabilit
 
   More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
 
-### Driver
+### Download
 
-1. Download the latest driver release at [Driver Release](https://github.com/SoftU2F/SoftU2F-Win/releases)
+1. Download the latest driver and daemon release at [Driver Release](https://github.com/SoftU2F/SoftU2F-Win/releases)
 
-2. Run the `driver-install.ps1` in elevated powershell.
+2. Run the `driver-install.ps1` in elevated powershell to install the driver.
 
-### Daemon
-
-1. Download
-
-  * If you have latest .NET Core 3.0 SDK/Runtime installed you can download the FDE(Framework dependent executable) at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
-  * Otherwise you can download the SCD(Self-contained deployment) at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
-
-2. Extrat and Run SoftU2FDaemon.exe
 
 ## Usage
 
