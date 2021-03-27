@@ -1,46 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Forms;
-using U2FLib.Storage;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Win32;
-using U2FLib;
-using Application = System.Windows.Forms.Application;
-using ContextMenu = System.Windows.Forms.ContextMenu;
-using MenuItem = System.Windows.Forms.MenuItem;
-using MessageBox = System.Windows.MessageBox;
+﻿using ContextMenu = System.Windows.Forms.ContextMenuStrip;
+using MenuItem = System.Windows.Forms.ToolStripMenuItem;
 
 namespace SoftU2FDaemon
 {
-    class App : Form, INotifySender
+    using System;
+    using System.Drawing;
+    using System.IO;
+    using System.Linq;
+    using System.Runtime.InteropServices;
+    using System.Threading;
+    using System.Windows.Forms;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Win32;
+    using U2FLib;
+    using U2FLib.Storage;
+
+    internal class App : Form, INotifySender
     {
-        private NotifyIcon _trayIcon;
-        private ContextMenu _trayMenu;
         private CancellationTokenSource _cancellation;
 
         private IServiceProvider _serviceProvider;
+        private NotifyIcon _trayIcon;
+        private ContextMenu _trayMenu;
 
-        #region App settings
-
-        private static readonly string BinName = typeof(App).Assembly.GetName().Name;
-        private static readonly string BinFolder = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), BinName);
-        private static readonly string DBPath = Path.Combine(
-            BinFolder, "db.sqlite");
-
-        #endregion
+        public App()
+        {
+            SetupApplication();
+            InitializeTrayIcon();
+            InitializeBackgroundDaemon();
+        }
 
         [STAThread]
         public static void Main()
@@ -50,23 +39,29 @@ namespace SoftU2FDaemon
             Application.Run(new App());
         }
 
-        public App()
-        {
-            SetupApplication();
-            InitializeTrayIcon();
-            InitializeBackgroundDaemon();
-        }
+        #region App settings
+
+        private static readonly string BinName = typeof(App).Assembly.GetName().Name;
+
+        private static readonly string BinFolder = Path.Combine(
+            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), BinName);
+
+        private static readonly string DBPath = Path.Combine(
+            BinFolder, "db.sqlite");
+
+        #endregion
 
         #region Application LifeCycle
 
-        IntPtr lastActiveWin = IntPtr.Zero;
+        private IntPtr lastActiveWin = IntPtr.Zero;
 
         [DllImport("user32.dll", ExactSpelling = true)]
-        static extern IntPtr GetForegroundWindow();
+        private static extern IntPtr GetForegroundWindow();
 
         [DllImport("user32.dll")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
+        private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         #endregion
 
         #region Application Initialization
@@ -111,7 +106,8 @@ namespace SoftU2FDaemon
                 Environment.Exit(1);
                 return;
             }
-            (new Thread(() => { daemon.StartIoLoop(_cancellation.Token); })).Start();
+
+            new Thread(() => { daemon.StartIoLoop(_cancellation.Token); }).Start();
             UserPresence.Sender = this;
         }
 
@@ -131,21 +127,20 @@ namespace SoftU2FDaemon
         {
             _trayMenu = new ContextMenu();
 
-            var item = new MenuItem("Auto Start");
-            item.Checked = AutoStart();
+            var item = new MenuItem {Text = @"Auto Start", Checked = AutoStart()};
             item.Click += OnAutoStartClick;
-            _trayMenu.MenuItems.Add(item);
+            _trayMenu.Items.Add(item);
 
-            _trayMenu.MenuItems.Add("Reset", OnResetClickedOnClick);
-            _trayMenu.MenuItems.Add("-");
-            _trayMenu.MenuItems.Add("Exit", (sender, args) => Application.Exit());
+            _trayMenu.Items.Add("Reset", null, OnResetClickedOnClick);
+            _trayMenu.Items.Add("-");
+            _trayMenu.Items.Add("Exit", null, (sender, args) => Application.Exit());
 
             _trayIcon = new NotifyIcon
             {
-                Text = "SoftU2F Daemon",
-                ContextMenu = _trayMenu,
+                Text = @"SoftU2F Daemon",
+                ContextMenuStrip = _trayMenu,
                 Icon = new Icon("tray.ico"),
-                Visible = true,
+                Visible = true
             };
 
             _trayIcon.BalloonTipClicked += (sender, args) =>
@@ -168,48 +163,42 @@ namespace SoftU2FDaemon
         {
             if (AutoStart())
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
-                {
-                    key?.DeleteValue(BinName, false);
-                }
+                using var key =
+                    Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                key?.DeleteValue(BinName, false);
             }
             else
             {
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
-                {
-                    key?.SetValue(BinName, "\"" + Application.ExecutablePath + "\"");
-                }
+                using var key =
+                    Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                key?.SetValue(BinName, "\"" + Application.ExecutablePath + "\"");
             }
 
             var item = (MenuItem) sender;
             item.Checked = !item.Checked;
         }
 
-        private bool AutoStart()
+        private static bool AutoStart()
         {
-            using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
-            {
-                return key != null && key.GetValueNames().Any(v => v == BinName);
-            }
+            using var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            return key != null && key.GetValueNames().Any(v => v == BinName);
         }
 
         private void OnResetClickedOnClick(object sender, EventArgs args)
         {
-            var confirm = MessageBox.Show("Do you want to reset SoftU2F? this will delete all your local data.",
-                "Reset Database", MessageBoxButton.YesNo);
-            if (confirm != MessageBoxResult.Yes)
+            var confirm = MessageBox.Show(@"Do you want to reset SoftU2F? this will delete all your local data.",
+                @"Reset Database", MessageBoxButtons.YesNo);
+            if (confirm != DialogResult.Yes)
             {
                 MessageBox.Show("Reset cancelled");
                 return;
             }
 
-            if (File.Exists(DBPath))
-            {
-                var bak = $"{DBPath}.bak";
-                if (File.Exists(bak)) File.Delete(bak);
-                File.Move(DBPath, bak);
-                Restart();
-            }
+            if (!File.Exists(DBPath)) return;
+            var bak = $"{DBPath}.bak";
+            if (File.Exists(bak)) File.Delete(bak);
+            File.Move(DBPath, bak);
+            Restart();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -223,21 +212,18 @@ namespace SoftU2FDaemon
 
         #region IDisposable
 
-        public void Dispose()
+        public new void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        private bool disposed = false;
+        private readonly bool disposed = false;
+
         protected override void Dispose(bool disposing)
         {
             if (disposed) return;
-            if (disposing)
-            {
-
-                _cancellation.Cancel();
-            }
+            if (disposing) _cancellation.Cancel();
             base.Dispose(disposing);
         }
 
@@ -251,7 +237,7 @@ namespace SoftU2FDaemon
         #region UserPresence
 
         private Action<bool> _userPresenceCallback;
-        private readonly object _userPresenceCallbackLock = new object();
+        private readonly object _userPresenceCallbackLock = new();
         private bool _notificationOpen;
 
         private Action<bool> UserPresenceCallback
@@ -265,10 +251,12 @@ namespace SoftU2FDaemon
                 }
             }
         }
+
         public void Send(string title, string message, Action<bool> userClicked)
         {
             if (_notificationOpen) return;
-            _trayIcon.ShowBalloonTip((int)TimeSpan.FromSeconds(10).TotalMilliseconds, title, message, ToolTipIcon.Info);
+            _trayIcon.ShowBalloonTip((int) TimeSpan.FromSeconds(10).TotalMilliseconds, title, message,
+                ToolTipIcon.Info);
             UserPresenceCallback = userClicked;
         }
 
