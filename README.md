@@ -27,6 +27,8 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 1. Download the latest driver and daemon release at [Driver Release](https://github.com/SoftU2F/SoftU2F-Win/releases)
 
+2. Right click on the `.sys` file and click on "View Certificate" and install the certificate to the "Trusted Store" on your machine.
+
 2. Run the `driver-install.ps1` in elevated powershell to install the driver.
 
 
