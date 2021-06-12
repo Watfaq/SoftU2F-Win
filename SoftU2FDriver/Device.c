@@ -1342,7 +1342,7 @@ EvtIoDeviceControlForMainPdo(
 		}
 		
 		// to see if we have a report ready
-		if (InputBufferLength > 0 && InputBufferLength <= IO_CTL_XFER_MESSAGE_SIZE)
+		if (InputBufferLength >= sizeof(IO_CTL_XFER_MESSAGE) && InputBufferLength <= IO_CTL_XFER_MESSAGE_SIZE)
 		{
 			status = WdfRequestRetrieveInputBuffer(Request, InputBufferLength, &requestInputBuffer, NULL);
 			if (!NT_SUCCESS(status))
@@ -1352,6 +1352,12 @@ EvtIoDeviceControlForMainPdo(
 			}
 
 			xferMessage = (PIO_CTL_XFER_MESSAGE)requestInputBuffer;
+			
+			if (xferMessage->bcnt > InputBufferLength - sizeof(IO_CTL_XFER_MESSAGE)) {
+				KdPrint(("message bcnt is out of bounds: %d\n", xferMessage->bcnt));
+				return;
+			}
+			
 			response.cmd = xferMessage->cmd;
 			response.cid = xferMessage->cid;
 			response.bcnt = xferMessage->bcnt;
