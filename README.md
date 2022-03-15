@@ -78,6 +78,24 @@ At this stage, I'm still trying to get a EV Certificate to sign this driver, so 
 
 Having a signature won't change any of the behaviour of this software and all the source code is public to everyone to read and contribute.
 
+## Development
+
+### Driver
+
+Install:
+
+* Microsoft Visual Studio
+* Windows SDK
+* Windows Driver Kit (WDK)
+
+Download and tutorials can be found at: https://docs.microsoft.com/en-us/windows-hardware/drivers/gettingstarted/writing-a-very-small-kmdf--driver
+
+And you should be able to compile the driver in Visual Studio.
+
+### Daemon
+
+Daemon is just an NET Core project, no extra requirement other than developing a normal NET Core apps.
+
 ## Support
 
 If you like this project, you can support me to buy a EV certificate, or just a cup of coffee :)
