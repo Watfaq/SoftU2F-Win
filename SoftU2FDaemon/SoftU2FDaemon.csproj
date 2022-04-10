@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -13,6 +13,7 @@
     <PackageProjectUrl>https://github.com/ibigbug/softu2f-win</PackageProjectUrl>
     <RepositoryUrl>https://github.com/ibigbug/softu2f-win</RepositoryUrl>
     <PackageTags>u2f,security</PackageTags>
+    <PublishSingleFile>True</PublishSingleFile>
   </PropertyGroup>
 
   <PropertyGroup>
