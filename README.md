@@ -18,7 +18,7 @@ We take the security of this project seriously. Report any security vulnerabilit
   The easiest way to do this is putting you device into Test Mode. Run this in elevated prompt
 
   ```
-  $ bcdedit /set TESTSIGNING OFF
+  $ bcdedit /set TESTSIGNING ON
   ```
 
   More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
