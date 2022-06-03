@@ -1,0 +1,39 @@
+on:
+  push:
+    # Sequence of patterns matched against refs/tags
+    tags:
+    - 'v*' # Push events to matching v*, i.e. v1.0, v20.15.10
+
+name: Publish Daemon
+
+jobs:
+  publish:
+    strategy:
+      matrix:
+        runtime: ['win10-x64']
+    name: Upload Release Asset
+    runs-on: windows-latest
+    steps:
+      - name: Setup .NET Core SDK
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+          include-prerelease: true
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Build project # This would actually build your project, using zip for an example artifact
+        run: |
+          dotnet publish --configuration Release --runtime win10-x64 --output Release/win10-x64 --version-suffix ${{ github.run_number }}
+      - name: Install zip
+        uses: montudor/action-zip@v1
+      - name: Zip output
+        run: zip -qq -r SoftU2FDaemon-SCD-win10-x64-${{ github.run_number }}.zip *
+        working-directory: Release/win10-x64
+      - name: Upload Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            SoftU2FDaemon-SCD-win10-x64-${{ github.run_number }}.zip
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
