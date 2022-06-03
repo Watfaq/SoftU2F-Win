@@ -20,6 +20,13 @@ We take the security of this project seriously. Report any security vulnerabilit
   ```
   $ bcdedit /set TESTSIGNING ON
   ```
+  
+  OR (https://github.com/SoftU2F/SoftU2F-Win/issues/12#issuecomment-1065002646)
+  
+  1. Press and hold the Shift key on your keyboard and click the Restart button.
+  2. Choose Troubleshoot > Advanced options > Startup Settings and click the Restart button.
+  3. When your computer restarts you’ll see a list of options. Press F7 on your keyboard to select Disable driver signature enforcement.
+  4. Your computer will now restart and the driver will work, **but note that it only works on this restart, after you restart the pc again you have to repeat the process** 
 
   More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
 
