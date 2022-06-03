@@ -9,23 +9,23 @@ name: Publish Daemon
 jobs:
   publish:
     name: Upload Release Asset
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
+          
       - name: Checkout code
         uses: actions/checkout@v3
+        
       - name: Build project # This would actually build your project, using zip for an example artifact
         run: |
           dotnet publish --configuration Release --runtime win10-x64 --self-contained --output Release/win10-x64 --version-suffix ${{ github.run_number }} SoftU2FDaemon/SoftU2FDaemon.csproj
-      - name: Install zip
-        uses: montudor/action-zip@v1
-      - name: Zip output
-        run: zip -qq -r SoftU2FDaemon-SCD-win10-x64-${{ github.run_number }}.zip *
-        working-directory: Release/win10-x64
+          Compress-Archive -Path Release/win10-x64\* -DestinationPath SoftU2FDaemon-SCD-win10-x64-${{ github.run_number }}.zip
+
+
       - name: Upload Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
