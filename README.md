@@ -1,8 +1,8 @@
 [SoftU2F-Win](https://ibigbug.online/softu2f-for-windows) is a software U2F authenticator for Windows. It emulates a hardware U2F HID device and performs cryptographic operations using the DPAPI. This tool works with Google Chrome. Running on other browsers hasn't been tested.
 
-We take the security of this project seriously. Report any security vulnerabilities to i#xiaoba.me
+We take the security of this project seriously. Report any security vulnerabilities to open-source@watfaq.com
 
-[![Build Status](https://watfaq.visualstudio.com/SoftU2F/_apis/build/status/ibigbug.SoftU2F-Win?branchName=master)](https://watfaq.visualstudio.com/SoftU2F/_build/latest?definitionId=7&branchName=master)
+[![Publish Daemon](https://github.com/SoftU2F/SoftU2F-Win/actions/workflows/release.yml/badge.svg)](https://github.com/SoftU2F/SoftU2F-Win/actions/workflows/release.yml)
 
 ## Installation
 
