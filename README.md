@@ -29,7 +29,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 2. Right click on the `.sys` file and click on "View Certificate" and install the certificate to the "Trusted Store" on your machine.
 
-2. Run the `driver-install.ps1` in elevated powershell to install the driver.
+2. Run the `driver-install.ps1` in elevated powershell to install the driver. (Run `Set-ExecutionPolicy RemoteSigned` if needed)
 
 
 ## Usage
