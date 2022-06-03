@@ -8,11 +8,8 @@ name: Publish Daemon
 
 jobs:
   publish:
-    strategy:
-      matrix:
-        runtime: ['win10-x64']
     name: Upload Release Asset
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Setup .NET Core SDK
         uses: actions/setup-dotnet@v2
