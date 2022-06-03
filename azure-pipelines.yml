@@ -29,12 +29,14 @@ steps:
 
 - task: NuGetToolInstaller@0
   inputs:
-    versionSpec: '5.1.0' 
-    #checkLatest: false # Optional
+    versionSpec: '6.x' 
+    checkLatest: true # Optional
 
 - task: DotNetCoreInstaller@0
   inputs:
-    version: '3.0.100-preview6-012264' # replace this value with the version that you need for your project
+    packageType: 'sdk'
+    version: '5.0.404'
+    includePreviewVersions: true
 
 - script: dotnet restore
   displayName: Restore packages
@@ -61,27 +63,4 @@ steps:
   displayName: Publish win10-x64-SCD to artifacts
   inputs:
     targetPath: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-SCD-win10-x64-$(Build.BuildNumber).zip'
-    artifact: 'win10-x64-SCD'
-
-- script: dotnet publish
-          --configuration Release
-          --framework netcoreapp3.0
-          --output $(Build.ArtifactStagingDirectory)/netcoreapp3.0
-          --version-suffix $(Build.BuildNumber)
-  displayName: Publish netcoreapp3.0 Framework-dependent executables (FDE)
-  workingDirectory: $(Build.SourcesDirectory)\SoftU2FDaemon
-
-- task: ArchiveFiles@2
-  displayName: Archive netcoreapp3.0 Framework-dependent executables (FDE)
-  inputs:
-    rootFolderOrFile: '$(Build.ArtifactStagingDirectory)/netcoreapp3.0'
-    includeRootFolder: false
-    archiveType: 'zip'
-    archiveFile: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-FDE-netcoreapp3.0-$(Build.BuildNumber).zip'
-    replaceExistingArchive: true
-
-- task: PublishPipelineArtifact@1
-  displayName: Publish netcoreapp3.0-FDE to artifacts
-  inputs:
-    targetPath: '$(Build.ArtifactStagingDirectory)/SoftU2FDaemon-FDE-netcoreapp3.0-$(Build.BuildNumber).zip'
-    artifact: 'netcoreapp3.0-FDE'
+    artifact: 'win10-x64-SCD'  

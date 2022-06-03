@@ -4,7 +4,7 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 [![Build Status](https://watfaq.visualstudio.com/SoftU2F/_apis/build/status/ibigbug.SoftU2F-Win?branchName=master)](https://watfaq.visualstudio.com/SoftU2F/_build/latest?definitionId=7&branchName=master)
 
-## Installing
+## Installation
 
 > **This app is still under very active development. It may have bugs or doesn't work in some scenarios. Please don't use for production.**
 
@@ -18,25 +18,19 @@ We take the security of this project seriously. Report any security vulnerabilit
   The easiest way to do this is putting you device into Test Mode. Run this in elevated prompt
 
   ```
-  $ bcdedit /set TESTSIGNING OFF
+  $ bcdedit /set TESTSIGNING ON
   ```
 
   More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
 
-### Driver
+### Download
 
-1. Download the latest driver release at [Driver Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/driver-06212019)
+1. Download the latest driver and daemon release at [Driver Release](https://github.com/SoftU2F/SoftU2F-Win/releases)
 
-2. Run the `driver-install.ps1` in elevated powershell.
+2. Right click on the `.sys` file and click on "View Certificate" and install the certificate to the "Trusted Store" on your machine.
 
-### Daemon
+2. Run the `driver-install.ps1` in elevated powershell to install the driver.
 
-1. Download
-
-  * If you have latest .NET Core 3.0 SDK/Runtime installed you can download the FDE(Framework dependent executable) at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
-  * Otherwise you can download the SCD(Self-contained deployment) at [Daemon Release](https://github.com/ibigbug/SoftU2F-Win/releases/tag/daemon-alpha-release)
-
-2. Extrat and Run SoftU2FDaemon.exe
 
 ## Usage
 
@@ -83,6 +77,24 @@ Windows will only trust the drivers signed by a [trusted EV certificate](https:/
 At this stage, I'm still trying to get a EV Certificate to sign this driver, so that Disabling driver signature enforcement won't be needed to run this software.
 
 Having a signature won't change any of the behaviour of this software and all the source code is public to everyone to read and contribute.
+
+## Development
+
+### Driver
+
+Install:
+
+* Microsoft Visual Studio
+* Windows SDK
+* Windows Driver Kit (WDK)
+
+Download and tutorials can be found at: https://docs.microsoft.com/en-us/windows-hardware/drivers/gettingstarted/writing-a-very-small-kmdf--driver
+
+And you should be able to compile the driver in Visual Studio.
+
+### Daemon
+
+Daemon is just an NET Core project, no extra requirement other than developing a normal NET Core apps.
 
 ## Support
 
