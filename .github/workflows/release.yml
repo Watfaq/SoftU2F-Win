@@ -12,7 +12,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Setup .NET Core SDK
-        uses: actions/setup-dotnet@v2
+        uses: actions/setup-dotnet@v3.0.0
         with:
           dotnet-version: '6.0.x'
           include-prerelease: true
