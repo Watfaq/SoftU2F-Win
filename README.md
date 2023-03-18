@@ -6,37 +6,13 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 ## Installation
 
-> **This app is still under very active development. It may have bugs or doesn't work in some scenarios. Please don't use for production.**
-
-
-### Prerequisites
-
-* Disable [Driver Signing Enforcement](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-policy--windows-vista-and-later-)
-
-  To install the driver, you'll need to disable the driver signing enforcement.
-
-  The easiest way to do this is putting you device into Test Mode. Run this in elevated prompt
-
-  ```
-  $ bcdedit /set TESTSIGNING ON
-  ```
-  
-  OR (https://github.com/SoftU2F/SoftU2F-Win/issues/12#issuecomment-1065002646)
-  
-  1. Press and hold the Shift key on your keyboard and click the Restart button.
-  2. Choose Troubleshoot > Advanced options > Startup Settings and click the Restart button.
-  3. When your computer restarts you’ll see a list of options. Press F7 on your keyboard to select Disable driver signature enforcement.
-  4. Your computer will now restart and the driver will work, **but note that it only works on this restart, after you restart the pc again you have to repeat the process** 
-
-  More ways to [disable the enforcement](https://windowsreport.com/driver-signature-enforcement-windows-10/)
+> **Please use it for production environment on your own risk**
 
 ### Download
 
 1. Download the latest driver and daemon release at [Driver Release](https://github.com/SoftU2F/SoftU2F-Win/releases)
 
-2. Right click on the `.sys` file and click on "View Certificate" and install the certificate to the "Trusted Store" on your machine.
-
-2. Run the `driver-install.ps1` in elevated powershell to install the driver. (Run `Set-ExecutionPolicy RemoteSigned` if needed)
+1. Run the `driver-install.ps1` in elevated powershell to install the driver. (Run `Set-ExecutionPolicy RemoteSigned` if needed)
 
 
 ## Usage
@@ -73,19 +49,9 @@ For more infomation of DPAPI: https://docs.microsoft.com/en-us/dotnet/api/system
 
 A [note](https://github.com/github/SoftU2F#security-considerations) from Github Team
 
-## Signing
-
-Announced by Microsoft,
-
-> Note  Windows 10 for desktop editions (Home, Pro, Enterprise, and Education) and Windows Server 2016 kernel-mode drivers must be signed by the Windows Hardware Dev Center Dashboard, which requires an EV certificate. For details, see [Driver Signing Policy](https://docs.microsoft.com/en-us/windows-hardware/drivers/install/kernel-mode-code-signing-policy--windows-vista-and-later-).
-
-Windows will only trust the drivers signed by a [trusted EV certificate](https://docs.microsoft.com/en-us/windows-hardware/drivers/dashboard/get-a-code-signing-certificate#step-2-buy-a-new-code-signing-certificate).
-
-At this stage, I'm still trying to get a EV Certificate to sign this driver, so that Disabling driver signature enforcement won't be needed to run this software.
-
-Having a signature won't change any of the behaviour of this software and all the source code is public to everyone to read and contribute.
-
 ## Development
+
+### Prerequisites
 
 ### Driver
 
@@ -103,15 +69,9 @@ And you should be able to compile the driver in Visual Studio.
 
 Daemon is just an NET Core project, no extra requirement other than developing a normal NET Core apps.
 
-## Support
+## Sponsorships
 
-If you like this project, you can support me to buy a EV certificate, or just a cup of coffee :)
-
-* [`PayPal`](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=4HZETSUYU29T8&currency_code=USD&source=url)
-
-* [`₿TC`](https://www.blockchain.com/btc/payment_request?address=14WABfFsMR51oP5LgJZEzSP5dLoBxymop3&message=Support+SoftU2F)
-
-* [`EOS`](https://eosauthority.com/account?account=eosgolangsdk&network=eos#transactions)
+- Razoreye LTD's fund for the driver signing
 
 ## Known app-IDs/facets
 

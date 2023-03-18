@@ -1,0 +1,17 @@
+;
+.OPTION EXPLICIT     ; Generate errors
+.Set CabinetFileCountThreshold=0
+.Set FolderFileCountThreshold=0
+.Set FolderSizeThreshold=0
+.Set MaxCabinetSize=0
+.Set MaxDiskFileCount=0
+.Set MaxDiskSize=0
+.Set CompressionType=MSZIP
+.Set Cabinet=on
+.Set Compress=on
+.Set CabinetNameTemplate=SoftU2F-Win.cab
+.Set DestinationDir=SoftU2F
+x64\Release\SoftU2FDriver\SoftU2FDriver.inf
+x64\Release\SoftU2FDriver\softu2f.cat
+x64\Release\SoftU2FDriver\SoftU2FDriver.sys
+x64\Release\SoftU2FDriver.pdb

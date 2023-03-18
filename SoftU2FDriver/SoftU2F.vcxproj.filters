@@ -22,7 +22,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="SoftU2F.inf">
+    <Inf Include="SoftU2FDriver.inf">
       <Filter>Driver Files</Filter>
     </Inf>
   </ItemGroup>
