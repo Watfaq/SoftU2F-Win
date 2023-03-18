@@ -72,7 +72,7 @@ KmdfLibraryVersion = $KMDFVERSION$
 
 [Strings]
 SPSVCINST_ASSOCSERVICE= 0x00000002
-ManufacturerName="Watfaq"
+ManufacturerName="Watfaq Technologies Pty Ltd"
 ClassName="U2FHID"
 DiskName = "SoftU2F Installation Disk"
 SoftU2F.DeviceDesc = "SoftU2F Device"

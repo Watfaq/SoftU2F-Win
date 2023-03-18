@@ -50,7 +50,7 @@
     <ClInclude Include="U2F.h" />
   </ItemGroup>
   <ItemGroup>
-    <Inf Include="SoftU2F.inf" />
+    <Inf Include="SoftU2FDriver.inf" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{6480AC5C-E1DE-4855-B9EA-AFA0243EFE88}</ProjectGuid>
@@ -224,6 +224,9 @@
     <DriverSign>
       <FileDigestAlgorithm>SHA256</FileDigestAlgorithm>
     </DriverSign>
+    <Inf>
+      <ProviderName>Watfaq Technologies Pty Ltd</ProviderName>
+    </Inf>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
