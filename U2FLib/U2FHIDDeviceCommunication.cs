@@ -78,6 +78,7 @@ namespace U2FLib
                 inputBufferLen = (uint)inputBuffer.Length;
             }
 
+            // block on inverted call
             var result = DeviceIoControl(
                 _device,
                 IOCTL_SOFTU2F_FILTER_INIT,

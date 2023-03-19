@@ -47,6 +47,7 @@ namespace U2FLib
             IO_CTL_XFER_MESSAGE replyTo = default;
             while (!token.IsCancellationRequested)
             {
+                // enter inverted call
                 replyTo = SendInitRequest(out var nTransferred, out var data, response, replyTo);
                 response = HandleRequest(data, replyTo);
             }

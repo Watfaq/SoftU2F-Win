@@ -128,7 +128,7 @@ Return Value:
 
     TraceEvents(TRACE_LEVEL_INFORMATION, TRACE_DRIVER, "%!FUNC! Entry");
 
-	KdPrint(("SoftU2FCreateDevice called: %s", "OK"));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "SoftU2FCreateDevice called: %s\n", "OK"));
 
     status = SoftU2FCreateDevice(DeviceInit);
 

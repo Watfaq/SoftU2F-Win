@@ -3,6 +3,9 @@ using MenuItem = System.Windows.Forms.ToolStripMenuItem;
 
 namespace SoftU2FDaemon
 {
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Win32;
     using System;
     using System.Drawing;
     using System.IO;
@@ -10,9 +13,6 @@ namespace SoftU2FDaemon
     using System.Runtime.InteropServices;
     using System.Threading;
     using System.Windows.Forms;
-    using Microsoft.EntityFrameworkCore;
-    using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Win32;
     using U2FLib;
     using U2FLib.Storage;
 
@@ -29,6 +29,11 @@ namespace SoftU2FDaemon
             SetupApplication();
             InitializeTrayIcon();
             InitializeBackgroundDaemon();
+
+            if (DiagnoseMode)
+            {
+                tryOutNotification();
+            }
         }
 
         [STAThread]
@@ -48,6 +53,11 @@ namespace SoftU2FDaemon
 
         private static readonly string DBPath = Path.Combine(
             BinFolder, "db.sqlite");
+        private static readonly string UnProtectedDBPath = Path.Combine(BinFolder, "db.unprotected.sqlite");
+
+        public static bool UnprotectedMode => Environment.GetCommandLineArgs().Contains("--db-unprotected");
+
+        public static bool DiagnoseMode => Environment.GetCommandLineArgs().Contains("--diagnose-mode");
 
         #endregion
 
@@ -115,8 +125,17 @@ namespace SoftU2FDaemon
         {
             service.AddLogging();
             service.AddSingleton<IU2FBackgroundTask, BackgroundTask>();
-            service.AddDbContext<AppDbContext>(options => { options.UseSqlite($"Filename={DBPath}"); });
-            Environment.SetEnvironmentVariable("DBPath", DBPath); // for DbContext outside container
+
+            if (UnprotectedMode)
+            {
+                service.AddDbContext<AppDbContext>(options => { options.UseSqlite($"Filename={UnProtectedDBPath}"); });
+                Environment.SetEnvironmentVariable("DBPath", UnProtectedDBPath); // for DbContext outside container
+            }
+            else
+            {
+                service.AddDbContext<AppDbContext>(options => { options.UseSqlite($"Filename={DBPath}"); });
+                Environment.SetEnvironmentVariable("DBPath", DBPath); // for DbContext outside container
+            }
         }
 
         #endregion
@@ -127,7 +146,7 @@ namespace SoftU2FDaemon
         {
             _trayMenu = new ContextMenu();
 
-            var item = new MenuItem {Text = @"Auto Start", Checked = AutoStart()};
+            var item = new MenuItem { Text = @"Auto Start", Checked = AutoStart() };
             item.Click += OnAutoStartClick;
             _trayMenu.Items.Add(item);
 
@@ -174,7 +193,7 @@ namespace SoftU2FDaemon
                 key?.SetValue(BinName, "\"" + Application.ExecutablePath + "\"");
             }
 
-            var item = (MenuItem) sender;
+            var item = (MenuItem)sender;
             item.Checked = !item.Checked;
         }
 
@@ -255,9 +274,14 @@ namespace SoftU2FDaemon
         public void Send(string title, string message, Action<bool> userClicked)
         {
             if (_notificationOpen) return;
-            _trayIcon.ShowBalloonTip((int) TimeSpan.FromSeconds(10).TotalMilliseconds, title, message,
+            _trayIcon.ShowBalloonTip((int)TimeSpan.FromSeconds(10).TotalMilliseconds, title, message,
                 ToolTipIcon.Info);
             UserPresenceCallback = userClicked;
+        }
+
+        private void tryOutNotification()
+        {
+            _trayIcon.ShowBalloonTip((int)TimeSpan.FromSeconds(5).TotalMilliseconds, "Test Notification", "If you didn't see this, you'd probabaly have issue with handling authentication actions", ToolTipIcon.Info);
         }
 
         #endregion

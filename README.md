@@ -19,6 +19,9 @@ We take the security of this project seriously. Report any security vulnerabilit
 
 The app runs in the background. When a site loaded in a U2F-compatible browser attempts to register or authenticate with the software token, you'll see a notification asking you to accept or reject the request. You can experiment on [Yubico's U2F demo site](https://demo.yubico.com/u2f).
 
+### Command Line Arguments
+- *--db-unprotected* - this will save the key pair into a separated sqlite db without the DPAPI protection, this can be useful if you want to back up the db for some reasons. when enabled, the data will be saved in to `db.unprotected.sqlite`. You can find the databases under `$HOME\AppData\Roaming\SoftU2FDaemon`
+
 ### Registration
 
 ![Registration](https://user-images.githubusercontent.com/543405/59797397-e9ab4e80-9322-11e9-9f36-555b608f926d.png)
