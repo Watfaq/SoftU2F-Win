@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Security.Cryptography;
 using Org.BouncyCastle.Asn1.Nist;
 using Org.BouncyCastle.Asn1.X9;
@@ -24,6 +25,7 @@ namespace U2FLib.Storage
         private byte[] _privateKey;
         private byte[] _publicKey;
 
+        private bool dataProtected => !Environment.GetCommandLineArgs().Contains("--db-unprotected");
 
         public KeyPair()
         {
@@ -41,10 +43,11 @@ namespace U2FLib.Storage
 
             PrivateKey = PrivateKeyInfoFactory.CreatePrivateKeyInfo(keyPair.Private).GetDerEncoded();
 
-            var ecPublicKey = (ECPublicKeyParameters) keyPair.Public;
+            var ecPublicKey = (ECPublicKeyParameters)keyPair.Public;
             PublicKey = ecPublicKey.Q.GetEncoded();
 
             KeyHandle = Convert.ToBase64String(sha512(PublicKey));
+
         }
 
         public string Label { get; set; }
@@ -69,8 +72,10 @@ namespace U2FLib.Storage
             set => _privateKey = Protect(value);
         }
 
-        private static byte[] Protect(byte[] data)
+        private byte[] Protect(byte[] data)
         {
+            if (!dataProtected) return data;
+
             try
             {
                 return ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
@@ -81,8 +86,10 @@ namespace U2FLib.Storage
             }
         }
 
-        private static byte[] UnProtect(byte[] data)
+        private byte[] UnProtect(byte[] data)
         {
+            if (!dataProtected) return data;
+
             try
             {
                 return ProtectedData.Unprotect(data, null, DataProtectionScope.CurrentUser);

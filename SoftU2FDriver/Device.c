@@ -158,11 +158,11 @@ Return Value:
 	status = CreateRawPdo(device);
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("Failed to create Raw Pdo\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Failed to create Raw Pdo\n"));
 		return status;
 	}
 
-	KdPrint(("Driver installed and loaded"));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Driver installed and loaded\n"));
 	return status;
 }
 
@@ -182,7 +182,7 @@ EvtDeviceSelfManagedIoInit(
 
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("VhfStart failed %d\n", status));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "VhfStart failed %d\n", status));
 	}
 
 	return status;
@@ -210,7 +210,7 @@ NTSTATUS RAWPDO_EvtDeviceSelfManagedIoInit(
 )
 {
 	NTSTATUS status = STATUS_SUCCESS;
-	KdPrint(("RawPdo started\n"));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "RawPdo started\n"));
 	return status;
 }
 
@@ -222,7 +222,8 @@ HidWriteInputReport(
 	_In_ PHID_XFER_PACKET HidTransferPacket
 )
 {
-	KdPrint(("HidWriteInputReport called\n"));
+	// this is where the application started to request U2F conversation
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "HidWriteInputReport called\n"));
 
 	NTSTATUS status;
 	PDEVICE_CONTEXT deviceContext = (PDEVICE_CONTEXT)VhfClientContext;
@@ -241,10 +242,10 @@ HidWriteInputReport(
 
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("WriteInput report respond failed with status %x\n", status));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "WriteInput report respond failed with status %x\n", status));
 	}
 	else {
-		KdPrint(("WriteInput report responded\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "WriteInput report responded\n"));
 	}
 }
 
@@ -262,51 +263,51 @@ HidMessageRead(
 	frame = (PU2FHID_FRAME)HidTransferPacket->reportBuffer;
 
 	if (frame->cid == 0x0) {
-		KdPrint(("Frame with cid 0.\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Frame with cid 0.\n"));
 		HidErrorMessageSend(deviceContext->VhfHandle, frame->cid, ERR_INVALID_CID);
 		return;
 	}
 
 	message = MessageListFind(deviceContext, frame->cid);
 
-	KdPrint(("MessageListFind result for cid: %d, %d. cmd: %d, MessateListCount: %d", frame->cid, !!message, frame->init.cmd, MessageListCount(deviceContext)));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "MessageListFind result for cid: %d, %d. cmd: %d, MessateListCount: %d", frame->cid, !!message, frame->init.cmd, MessageListCount(deviceContext)));
 
 	switch (FRAME_TYPE(*frame))
 	{
 	case TYPE_INIT:
 		if (message) {
 			if (frame->init.cmd == U2FHID_INIT) {
-				KdPrint(("U2FHID_INIT while waiting for CONT. Resetting.\n"));
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "U2FHID_INIT while waiting for CONT. Resetting.\n"));
 				MessageListRemove(deviceContext, message);
 			}
 			else {
-				KdPrint(("INIT frame out of order.Bailing.\n"));
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "INIT frame out of order.Bailing.\n"));
 				HidErrorMessageSend(deviceContext->VhfHandle, frame->cid, ERR_INVALID_SEQ);
 				MessageListRemove(deviceContext, message);
 				return;
 			}
 		}
 		else if (frame->init.cmd == U2FHID_SYNC) {
-			KdPrint(("SYNC frame out of order. Bailing.\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "SYNC frame out of order. Bailing.\n"));
 			HidErrorMessageSend(deviceContext->VhfHandle, frame->cid, ERR_INVALID_CMD);
 			return;
 		}
 		else if (frame->init.cmd != U2FHID_INIT && MessageListCount(deviceContext) > 0)
 		{
-			KdPrint(("INIT frame while waiting for CONT on other CID.\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "INIT frame while waiting for CONT on other CID.\n"));
 			HidErrorMessageSend(deviceContext->VhfHandle, frame->cid, ERR_CHANNEL_BUSY);
 			return;
 		}
 
 		if (frame->cid == CID_BROADCAST && frame->init.cmd != U2FHID_INIT)
 		{
-			KdPrint(("Non U2FHID_INIT message on broadcast CID.\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Non U2FHID_INIT message on broadcast CID.\n"));
 			HidErrorMessageSend(deviceContext->VhfHandle, frame->cid, ERR_INVALID_CID);
 			return;
 		}
 
 
-		KdPrint(("got frame from channel: %d\n", frame->cid));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "got frame from channel: %d\n", frame->cid));
 
 		message = MessageListCreate(deviceContext);
 		if (!message)
@@ -322,7 +323,7 @@ HidMessageRead(
 		// see maximum message length
 		// https://fidoalliance.org/specs/fido-u2f-v1.0-ps-20141009/fido-u2f-hid-protocol-ps-20141009.html
 		if (message->bcnt > MAX_BCNT) {
-			KdPrint(("BCNT too large (%u). Bailing.\n", message->bcnt));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "BCNT too large (%u). Bailing.\n", message->bcnt));
 			HidErrorMessageSend(deviceContext->VhfHandle, message->cid, ERR_INVALID_LEN);
 			MessageListRemove(deviceContext, message);
 			return;
@@ -349,13 +350,13 @@ HidMessageRead(
 	case TYPE_CONT:
 		if (!message)
 		{
-			KdPrint(("CONT frame out of order. Ignoring\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "CONT frame out of order. Ignoring\n"));
 			return;
 		}
 
 		if (FRAME_SEQ(*frame) != message->lastSeq++)
 		{
-			KdPrint(("Bad SEQ in CONT frame (%d). Bailing\n", FRAME_SEQ(*frame)));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Bad SEQ in CONT frame (%d). Bailing\n", FRAME_SEQ(*frame)));
 			MessageListRemove(deviceContext, message);
 			HidErrorMessageSend(deviceContext->VhfHandle, frame->cid, ERR_INVALID_SEQ);
 			return;
@@ -374,7 +375,7 @@ HidMessageRead(
 
 
 	default:
-		KdPrint(("Unknow frame type: 0x%08x\n", FRAME_TYPE(*frame)));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Unknow frame type: 0x%08x\n", FRAME_TYPE(*frame)));
 		return;
 	}
 
@@ -402,7 +403,7 @@ HidMessageHandle(
 
 		if (HidMessageIsComplete(deviceContext, message))
 		{
-			KdPrint(("Message Complete, responding\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Message Complete, responding\n"));
 			HidMessageFinalize(deviceContext, message);
 			switch (message->cmd)
 			{
@@ -418,6 +419,8 @@ HidMessageHandle(
 			case U2FHID_SYNC:
 				U2FHandleMessageSync(deviceContext, message);
 				break;
+			// all the above msg can be processed within kernel mode
+			// the below msg, we need to forward to user space
 			case U2FHID_MSG:
 				U2FHandleMessageMsg(deviceContext, message);
 				break;
@@ -427,12 +430,12 @@ HidMessageHandle(
 			MessageListRemove(deviceContext, message);
 		}
 		else if (HidMessageIsTimeout(deviceContext, message)) {
-			KdPrint(("Message Timeout, sending ERR_MSG_TIMEOUT.\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Message Timeout, sending ERR_MSG_TIMEOUT.\n"));
 			HidErrorMessageSend(deviceContext->VhfHandle, message->cid, ERR_MSG_TIMEOUT);
 			MessageListRemove(deviceContext, message);
 		}
 		else {
-			KdPrint(("Message %d didn't complete, wainting for cont.\n", message->cid));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Message %d didn't complete, wainting for cont.\n", message->cid));
 		}
 	}
 }
@@ -483,7 +486,7 @@ U2FHandleMessageInit(
 
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("Failed to submit report\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Failed to submit report\n"));
 		return;
 	}
 }
@@ -517,7 +520,7 @@ U2FHandleMessageWink(
 	resp.bcnt = message->bcnt;
 	resp.data = message->data;
 
-	HidMessageSend(deviceContext->VhfHandle, message);
+	HidMessageSend(deviceContext->VhfHandle, &resp);
 }
 
 VOID
@@ -547,15 +550,16 @@ U2FHandleMessageMsg(
 	ULONG_PTR bytesTransferred = 0;
 	PIO_CTL_XFER_MESSAGE xferMessage;
 
+	// grap a pending inverted call request, so we use this to notify User Space
 	status = WdfIoQueueRetrieveNextRequest(deviceContext->ManualQueue, &notifyRequest);
 
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("No pending req found\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "No pending req found\n"));
 		return;
 	}
 
-	KdPrint(("Message bcnt %d\n", message->bcnt));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Message bcnt %d\n", message->bcnt));
 
 	status = WdfRequestRetrieveOutputBuffer(
 		notifyRequest,
@@ -564,23 +568,23 @@ U2FHandleMessageMsg(
 		NULL);
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("Cant retrive memory for request\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Cant retrive memory for request\n"));
 		status = STATUS_MEMORY_NOT_ALLOCATED;
 		goto FINISH;
 	}
 
-	KdPrint(("Buffer retrived with len %d\n", sizeof(IO_CTL_XFER_MESSAGE) + message->bcnt));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Buffer retrived with len %d\n", sizeof(IO_CTL_XFER_MESSAGE) + message->bcnt));
 
 	xferMessage->cmd = message->cmd;
 	xferMessage->cid = message->cid;
 	xferMessage->bcnt = message->bcnt;
 	RtlCopyMemory((PUCHAR)xferMessage + sizeof(IO_CTL_XFER_MESSAGE), message->data, message->bcnt);
 
-	KdPrint(("Respons built, sending\n"));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Respons built, sending\n"));
 
 	bytesTransferred = sizeof(IO_CTL_XFER_MESSAGE) + message->bcnt;
 
-	KdPrint(("Sending response %d\n", bytesTransferred));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Sending response %d\n", bytesTransferred));
 
 FINISH:
 	WdfRequestCompleteWithInformation(notifyRequest, status, bytesTransferred);
@@ -618,7 +622,7 @@ CreateRawQueue(
 		&queue);
 
 	if (!NT_SUCCESS(status)) {
-		KdPrint(("WdfIoQueueCreate failed 0x%X\n", status));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "WdfIoQueueCreate failed 0x%X\n", status));
 		return status;
 	}
 
@@ -660,7 +664,7 @@ CreateManualQueue(
 	);
 
 	if (!NT_SUCCESS(status)) {
-		KdPrint(("ManualQueue failed 0x%x\n", status));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "ManualQueue failed 0x%x\n", status));
 		return status;
 	}
 
@@ -703,7 +707,7 @@ CreateTimer(
 
 	if (!NT_SUCCESS(status))
 	{
-		KdPrint(("Create timer failed"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Create timer failed"));
 		return status;
 	}
 
@@ -733,7 +737,7 @@ CreateRawPdo(
 	DECLARE_CONST_UNICODE_STRING(SDDL_MY_PERMISSIONS, L"D:P(A;; GA;;; SY)(A;; GA;;; BA)(A;; GA;;; WD)");
 	DECLARE_UNICODE_STRING_SIZE(buffer, MAX_ID_LEN);
 
-	KdPrint(("Creating RawPdo\n"));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Creating RawPdo\n"));
 
 	pDeviceInit = WdfPdoInitAllocate(Device);
 
@@ -878,7 +882,7 @@ CreateRawPdo(
 		&queue // pointer to default queue
 	);
 	if (!NT_SUCCESS(status)) {
-		KdPrint(("WdfIoQueueCreate failed 0x%x\n", status));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "WdfIoQueueCreate failed 0x%x\n", status));
 		goto Cleanup;
 	}
 
@@ -917,7 +921,7 @@ CreateRawPdo(
 	);
 
 	if (!NT_SUCCESS(status)) {
-		KdPrint(("WdfDeviceCreateDeviceInterface failed 0x%x\n", status));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "WdfDeviceCreateDeviceInterface failed 0x%x\n", status));
 		goto Cleanup;
 	}
 
@@ -940,7 +944,7 @@ CreateRawPdo(
 	return STATUS_SUCCESS;
 Cleanup:
 
-	KdPrint(("CreateRawPdo failed %x\n", status));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "CreateRawPdo failed %x\n", status));
 
 	//
 	// Call WdfDeviceInitFree if you encounter an error while initializing
@@ -1133,7 +1137,7 @@ MessageAlloc
 	message = (PU2FHID_MESSAGE)MmAllocateNonCachedMemory(sizeof(U2FHID_MESSAGE));
 	if (!message)
 	{
-		KdPrint(("No memory for new message.\n"));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "No memory for new message.\n"));
 		return NULL;
 	}
 
@@ -1275,7 +1279,7 @@ EvtIoDeviceControlForRawPdo(
 	UNREFERENCED_PARAMETER(InputBufferLength);
 
 	pdoContext = GetRawPdoDeviceContext(parent);
-	KdPrint(("RawPdo got DeviceControl, ControlCode(%lu)\n", IoControlCode));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "RawPdo got DeviceControl, ControlCode(%lu)\n", IoControlCode));
 
 	switch (IoControlCode)
 	{
@@ -1317,7 +1321,7 @@ EvtIoDeviceControlForMainPdo(
 
 	const size_t IO_CTL_XFER_MESSAGE_SIZE = MAX_BCNT + sizeof(IO_CTL_XFER_MESSAGE);
 
-	KdPrint(("Entered EvtIoDeviceControlForMainPdo, IoControlCode(%lu), InputBufferLength %d, OutputBufferLength %d\n", IoControlCode, InputBufferLength, OutputBufferLength));
+	KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Entered EvtIoDeviceControlForMainPdo, IoControlCode(%lu), InputBufferLength %d, OutputBufferLength %d\n", IoControlCode, InputBufferLength, OutputBufferLength));
 
 	device = WdfIoQueueGetDevice(Queue);
 	deviceContext = GetDeviceContext(device);
@@ -1329,32 +1333,34 @@ EvtIoDeviceControlForMainPdo(
 		{
 			status = STATUS_BUFFER_TOO_SMALL;
 			nData = IO_CTL_XFER_MESSAGE_SIZE;
-			KdPrint(("OutputBuffer too small, required: %lu\n", nData));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "OutputBuffer too small, required: %lu\n", nData));
 			break;
 		}
 
-		KdPrint(("BufferLen check passed %d, forwarding to manual queue\n", OutputBufferLength));
+		KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "BufferLen check passed %d, forwarding to manual queue\n", OutputBufferLength));
+		
+		// supply the req to ManualQueue, so when a message received from kernel, the inverted call can use this request handle to notify user space.
 		status = WdfRequestForwardToIoQueue(Request, deviceContext->ManualQueue);
 		if (!NT_SUCCESS(status))
 		{
-			KdPrint(("Failed to forward to manual queue\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Failed to forward to manual queue\n"));
 			break;
 		}
 		
-		// to see if we have a report ready
+		// to see if User Space replied with anything
 		if (InputBufferLength >= sizeof(IO_CTL_XFER_MESSAGE) && InputBufferLength <= IO_CTL_XFER_MESSAGE_SIZE)
 		{
 			status = WdfRequestRetrieveInputBuffer(Request, InputBufferLength, &requestInputBuffer, NULL);
 			if (!NT_SUCCESS(status))
 			{
-				KdPrint(("Failed to retrive inputBuffer, NT_STATUS: %d, InputBufferLength: %d\n", status, InputBufferLength));
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Failed to retrive inputBuffer, NT_STATUS: %d, InputBufferLength: %d\n", status, InputBufferLength));
 				return;
 			}
 
 			xferMessage = (PIO_CTL_XFER_MESSAGE)requestInputBuffer;
 			
 			if (xferMessage->bcnt > InputBufferLength - sizeof(IO_CTL_XFER_MESSAGE)) {
-				KdPrint(("message bcnt is out of bounds: %d\n", xferMessage->bcnt));
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "message bcnt is out of bounds: %d\n", xferMessage->bcnt));
 				return;
 			}
 			
@@ -1363,14 +1369,20 @@ EvtIoDeviceControlForMainPdo(
 			response.bcnt = xferMessage->bcnt;
 			response.data = (PUCHAR)xferMessage + sizeof(IO_CTL_XFER_MESSAGE);
 
-			KdPrint(("Response message built, sending cmd: %d, cid: %d, bcnt: %d\n", response.cmd, response.cid, response.bcnt));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Response message built, sending cmd: %d, cid: %d, bcnt: %d\n", response.cmd, response.cid, response.bcnt));
+
+			// if we got a response from User Space, submit it to HID VHF;
 			status = HidMessageSend(deviceContext->VhfHandle, &response);
 			if (!NT_SUCCESS(status))
 			{
-				KdPrint(("Response message send failed\n"));
+				KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Response message send failed\n"));
 			}
-			KdPrint(("Response message sent\n"));
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Response message sent\n"));
 
+		}
+		else 
+		{
+			KdPrintEx((DPFLTR_IHVDRIVER_ID, DPFLTR_ERROR_LEVEL, "Invalid InputBufferLength %d \n", InputBufferLength));
 		}
 
 		return;
