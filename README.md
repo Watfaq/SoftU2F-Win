@@ -46,7 +46,7 @@ The app runs in the background. When a site loaded in a U2F-compatible browser a
 
 This is a port of https://github.com/github/SoftU2F.
 
-Instead of macOS Keychain, we store data using Windows DPAPI, which is designed by Microsoft Windows to store data data such as passwords, keys, and connection strings.
+Instead of macOS Keychain, we store data using Windows DPAPI, which is designed by Microsoft Windows to store data such as passwords, keys, and connection strings.
 
 For more infomation of DPAPI: https://docs.microsoft.com/en-us/dotnet/api/system.security.cryptography.protecteddata?view=netframework-4.8#remarks
 
