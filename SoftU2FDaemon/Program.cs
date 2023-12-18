@@ -103,6 +103,11 @@ namespace SoftU2FDaemon
             }
 
             _cancellation = new CancellationTokenSource();
+
+            _cancellation.Token.Register(() => {
+                _cancellation.Dispose();
+                if (_exitRequested) { Environment.Exit(0); }
+            });
         }
 
 
@@ -142,6 +147,8 @@ namespace SoftU2FDaemon
 
         #region System Tray Icon
 
+        private bool _exitRequested = false;
+
         private void InitializeTrayIcon()
         {
             _trayMenu = new ContextMenu();
@@ -152,7 +159,10 @@ namespace SoftU2FDaemon
 
             _trayMenu.Items.Add("Reset", null, OnResetClickedOnClick);
             _trayMenu.Items.Add("-");
-            _trayMenu.Items.Add("Exit", null, (sender, args) => Application.Exit());
+            _trayMenu.Items.Add("Exit", null, (sender, args) => {
+                _exitRequested = true;
+                Application.Exit();
+            });
 
             _trayIcon = new NotifyIcon
             {
@@ -176,6 +186,13 @@ namespace SoftU2FDaemon
                 lastActiveWin = GetForegroundWindow();
             };
             _trayIcon.BalloonTipClosed += (sender, args) => _notificationOpen = false;
+
+            this.FormClosing += (sender, e) =>
+            {
+                // Hide and dispose the icon
+                _trayIcon.Visible = false;
+                _trayIcon.Dispose();
+            };
         }
 
         private void OnAutoStartClick(object sender, EventArgs e)
